@@ -1,0 +1,118 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Custom Playlist as a List</title>
+    <link rel="stylesheet" href="{% static "css/calminggg.css" %}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div class="playlist">
+      <h2>White Noise Playlist</h2>
+      <ul id="playlist">
+        <li>
+          <button
+            class="play-button"
+            onclick="playSong('playlist/white noise/Daytime Forrest Bonfire.mp3')"
+          >
+            <i class="fas fa-play"></i>
+          </button>
+          BONFIRE
+        </li>
+        <li>
+          <button
+            class="play-button"
+            onclick="playSong('playlist/white noise/Radiation Suit Rustle.mp3')"
+          >
+            <i class="fas fa-play"></i>
+          </button>
+          RADIATION
+        </li>
+        <li>
+          <button
+            class="play-button"
+            onclick="playSong('playlist/white noise/Splashing Water.mp3')"
+          >
+            <i class="fas fa-play"></i>
+          </button>
+          SPLASHING WATER
+        </li>
+        <li>
+          <button
+            class="play-button"
+            onclick="playSong('playlist/white noise/Water Lapping Wind.mp3')"
+          >
+            <i class="fas fa-play"></i>
+          </button>
+          WATER LAPPING
+        </li>
+        <li>
+          <button
+            class="play-button"
+            onclick="playSong('playlist/white noise/Water Hose on Concrete.mp3')"
+          >
+            <i class="fas fa-play"></i>
+          </button>
+          WATER HOSE
+        </li>
+        <li>
+          <button
+            class="play-button"
+            onclick="playSong('playlist/white noise/Sunrise - Nat Keefe.mp3')"
+          >
+            <i class="fas fa-play"></i>
+          </button>
+          SUNRISE
+        </li>
+        <li>
+          <button
+            class="play-button"
+            onclick="playSong('playlist/white noise/Waves Crashing on Rock Beach.mp3')"
+          >
+            <i class="fas fa-play"></i>
+          </button>
+          ROCK BEACH
+        </li>
+        <li>
+          <button
+            class="play-button"
+            onclick="playSong('playlist/white noise/Water on Metal Surface.mp3')"
+          >
+            <i class="fas fa-play"></i>
+          </button>
+          WATER ON METAL SURFACE
+        </li>
+        <li>
+          <button
+            class="play-button"
+            onclick="playSong('playlist/white noise/Water Walk Series Sweetener .mp3')"
+          >
+            <i class="fas fa-play"></i>
+          </button>
+          WATER WALK
+        </li>
+      </ul>
+      <audio id="audioPlayer" controls>
+        <source id="audioSource" src="" type="audio/mpeg" />
+        <!-- Correct MIME type for .mp3 -->
+        Your browser does not support the audio element.
+      </audio>
+    </div>
+
+    <script>
+      const audioPlayer = document.getElementById("audioPlayer");
+      const audioSource = document.getElementById("audioSource");
+
+      function playSong(songUrl) {
+        audioSource.src = songUrl;
+        audioPlayer.load();
+        audioPlayer.play();
+      }
+    </script>
+  </body>
+</html>

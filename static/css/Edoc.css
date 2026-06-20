@@ -1,0 +1,316 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+  background-color: rgb(249, 250, 251);
+  color: #1a1a1a;
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem 1rem;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.header h1 {
+  font-size: 2.5rem;
+  color: #1a1a1a;
+  margin-bottom: 1rem;
+}
+
+.header p {
+  font-size: 1.125rem;
+  color: #666;
+}
+
+.doctors-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+.doctor-card {
+  background: white;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.doctor-card:hover {
+  transform: scale(1.03);
+}
+
+.doctor-image {
+  height: 200px;
+  width: 100%;
+  object-fit: cover;
+}
+
+.doctor-info {
+  padding: 1.5rem;
+}
+
+.doctor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.doctor-name {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.doctor-specialty {
+  color: #4b5563;
+  margin-bottom: 0.5rem;
+}
+
+.doctor-experience {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.book-button {
+  display: block;
+  width: 100%;
+  padding: 0.75rem;
+  margin-top: 1rem;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.book-button:hover {
+  background-color: #1d4ed8;
+}
+
+/* Responsive Grid */
+@media (min-width: 768px) {
+  .doctors-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .doctors-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Extra responsive tweaks for smaller screens */
+@media (max-width: 480px) {
+  .container {
+    padding: 1.2rem 0.5rem;
+  }
+  .header h1 {
+    font-size: 1.4rem;
+  }
+  .doctor-card {
+    border-radius: 0.6rem;
+  }
+  .doctor-info {
+    padding: 1rem;
+  }
+  .book-button {
+    padding: 0.6rem;
+    font-size: 0.95rem;
+  }
+}
+
+/* Back Symbol Button Responsive */
+.back-symbol {
+  position: fixed;
+  top: 20px;
+  left: 30px;
+  font-size: 1.2rem;
+  color: #00796b;
+  text-decoration: none;
+  font-weight: bold;
+  z-index: 1100;
+  transition: color 0.3s, transform 0.2s;
+}
+.back-symbol:hover {
+  color: #004d40;
+  transform: scale(1.2);
+}
+@media (max-width: 600px) {
+  .back-symbol {
+    top: 14px;
+    left: 12px;
+    font-size: 1rem;
+  }
+}
+
+/* Navigation */
+header {
+  background-color: #344e41;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 6px 8px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  margin-top: 0;
+}
+
+nav {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #a3b18a;
+  text-decoration: none;
+  margin-block: auto;
+  z-index: 1101;
+}
+
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+  margin-left: auto;
+  transition: all 0.3s;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #dad7cd;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+  color: #a3b18a;
+}
+
+.nav-links li {
+  position: relative;
+}
+
+.drop-down {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 160px;
+  background-color: #344e41;
+  z-index: 1;
+  list-style: none;
+  padding: 0;
+}
+
+.drop-down li a {
+  padding: 12px 16px;
+  display: block;
+}
+
+.nav-links li:hover .drop-down {
+  display: block;
+}
+
+.menu-toggle {
+  display: none;
+  background-color: #344e41;
+  color: #dad7cd;
+  border: none;
+  padding: 0.7rem 1.2rem;
+  border-radius: 6px;
+  font-size: 2rem;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+  margin-left: 1rem;
+  z-index: 1100;
+}
+
+.menu-toggle:hover,
+.menu-toggle:focus {
+  background-color: #1e40af;
+  color: #a3b18a;
+  outline: none;
+}
+
+@media (max-width: 900px) {
+  .menu-toggle {
+    display: block;
+  }
+  /* Example: hide nav links until toggled */
+  .nav-links {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: #344e41;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1rem 0;
+    margin: 0;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+    z-index: 1100;
+  }
+  .nav-links.active {
+    display: flex;
+  }
+}
+
+.menu-toggle {
+  display: none;
+  background-color: #344e41;
+  color: #dad7cd;
+  border: none;
+  padding: 0.7rem 1.2rem;
+  border-radius: 6px;
+  font-size: 2rem;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+  margin-left: 1rem;
+  z-index: 1100;
+}
+
+@media (max-width: 900px) {
+  .menu-toggle {
+    display: block;
+  }
+  .nav-links {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: #344e41;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1rem 0;
+    margin: 0;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+    z-index: 1100;
+  }
+  .nav-links.active {
+    display: flex;
+  }
+}

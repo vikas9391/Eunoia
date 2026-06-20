@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Activate Your Account</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        padding: 40px;
+      }
+      .container {
+        max-width: 600px;
+        background: #fff;
+        margin: auto;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+      h2 {
+        color: #2c3e50;
+      }
+      p {
+        font-size: 16px;
+        color: #555;
+      }
+      .btn {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 12px 25px;
+        background-color: #007bff;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+      }
+      .btn:hover {
+        background-color: #0056b3;
+      }
+      .footer {
+        margin-top: 40px;
+        font-size: 12px;
+        color: #999;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Welcome to Eunoia!</h2>
+      <p>Hi {{ user.username }},</p>
+      <p>
+        Thanks for signing up. Please click the button below to activate your
+        account:
+      </p>
+
+      <a href="{{ activation_link }}" class="btn">Activate Account</a>
+
+      <p>
+        If the button doesn’t work, you can also copy and paste the link below
+        into your browser:
+      </p>
+      <p style="word-break: break-all">
+        <a href="{{ activation_link }}">{{ activation_link }}</a>
+      </p>
+
+      <div class="footer">&copy; 2025 Eunoia. All rights reserved.</div>
+    </div>
+  </body>
+</html>

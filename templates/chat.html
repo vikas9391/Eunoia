@@ -1,0 +1,94 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Eunoia Chatbot</title>
+  <link rel="stylesheet" href="{% static 'css/chat.css' %}">
+  <script src="{% static 'js/chat.js' %}" defer></script>
+</head>
+<body>
+       <header>
+  <nav>
+    <a href="{% url 'index' %}">
+      <img
+        src="{% static 'images/Eunoia_Logo (1).png' %}"
+        alt="Eunoia"
+        width="50"
+        height="50"
+      />
+    </a>
+    <div class="logo">&nbsp;&nbsp;Eunoia</div>
+
+    <!-- Hamburger Menu Button (only visible on mobile) -->
+    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+
+    <ul class="nav-links">
+      <li><a href="{% url 'home' %}">Home</a></li>
+      <li><a href="{% url 'about' %}">About Us</a></li>
+      <li><a href="{% url 'mood' %}">Mood Tracker</a></li>
+      <li><a href="{% url 'edoc' %}">EDoc</a></li>
+      {% comment %} <li><a href="{% url 'chatbot' %}">Chatbot</a></li> {% endcomment %}
+
+      {% if user.is_authenticated %}
+      {% comment %} <li><a href="#">Welcome, {{ user.username }}</a></li> {% endcomment %}
+      <li><a href="{% url 'logout_page' %}">Logout</a></li>
+      {% else %}
+      <li><a href="{% url 'signup_page' %}">Sign up/Login</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+</header>
+  <!-- 📜 Sidebar -->
+  <div class="sidebar closed" id="sidebar">
+    <button id="close-sidebar" class="close-btn">&times;</button>
+    <h3>Chat History</h3>
+    <ul id="history-list"></ul>
+    <button onclick="startNewChat()" class="new-chat-btn">New chat</button>
+  </div>
+
+  <!-- 💬 Chatbox -->
+  <div class="container full" id="main-container">
+    <div class="chat-container">
+      <div class="button-row">
+  <a href="{% url 'home' %}" class="back-symbol">&lt;</a>
+  <button id="toggle-btn" class="toggle-btn">☰</button>
+</div>
+      <h2>Eviee AI</h2> 
+      <div id="chat-box"></div>
+      <div class="input-area">
+        <textarea id="user-input" rows="2" placeholder="Ask anything..."></textarea>
+        {% comment %} <input id="file-input" type="file" accept="image/*" multiple /> {% endcomment %}
+        <button onclick="sendMessage()">Send</button>
+        <button id="micBtn" title="Speech to text">🎤</button>
+      </div>
+      <div class="footer" id="footer"></div>
+    </div>
+  </div>
+
+  <!-- 🔔 Custom Alert Popup -->
+  <div class="popup-backdrop" id="custom-alert" style="display:none;">
+    <div class="custom-alert">
+      <div class="popup-error-icon" style="display:none;" id="custom-alert-icon">❌</div>
+      <div class="custom-alert-title" id="custom-alert-title">Message</div>
+      <div id="custom-alert-msg"></div>
+      <button class="popup-btn" onclick="closeCustomAlert()">OK</button>
+    </div>
+  </div>
+
+  <!-- ❔ Custom Confirm Popup -->
+  <div class="popup-backdrop" id="custom-confirm" style="display:none;">
+    <div class="custom-confirm">
+      <div class="custom-confirm-title" id="custom-confirm-title">Confirm</div>
+      <div id="custom-confirm-msg"></div>
+      <button class="popup-btn" id="custom-confirm-yes">Yes</button>
+      <button class="popup-btn" id="custom-confirm-no">No</button>
+    </div>
+  </div>
+   <script>
+  function toggleMenu() {
+    document.querySelector(".nav-links").classList.toggle("active");
+  }
+</script>
+</body>
+</html>

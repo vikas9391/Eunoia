@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Eunoia</title>
+    <link rel="stylesheet" href="{% static 'css/index.css' %}" />
+  </head>
+  <body>
+    <section class="hero">
+      <div class="hero-content">
+        <img src="{% static 'images/Eunoia_Logo (1).png' %}" alt="Eunoia" />
+        <h1>Welcome to the Eunoia</h1>
+        <p>Journey to explore your inner self !!!</p>
+        <a href="{% url 'home' %}" class="btn btn-primary">Eunoia</a>
+      </div>
+    </section>
+
+    <section class="features">
+      <div class="container">
+        <h2>✨Our Features✨</h2>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">🤖</div>
+            <h3>Eviee AI</h3>
+            <p>Your personal companion to support you through this journey.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🤩</div>
+            <h3>Mood Tracker</h3>
+            <p>Track your emotional state using our 'Mood Tracker'.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🩺</div>
+            <h3>EDoc</h3>
+            <p>Connect to professionals using EDoc.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta">
+      <div class="container">
+        <h2>Ready to Get Started?</h2>
+        <p>
+          Join thousands of satisfied customers who have already made the
+          switch.
+        </p>
+        <a href="{% url 'signup' %}" class="btn btn-secondary"
+          >Create Account</a
+        >
+      </div>
+    </section>
+  </body>
+</html>

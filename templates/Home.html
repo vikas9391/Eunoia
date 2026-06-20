@@ -1,0 +1,101 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Eunoia</title>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}" />
+    <script src="{% static 'js/home.js' %}" defer></script>
+  </head>
+  <body>
+    <div id="app">
+<header>
+  <nav>
+    <a href="{% url 'index' %}">
+      <img
+        src="{% static 'images/Eunoia_Logo (1).png' %}"
+        alt="Eunoia"
+        width="50"
+        height="50"
+      />
+    </a>
+    <div class="logo">&nbsp;&nbsp;Eunoia</div>
+
+    <!-- Hamburger Menu Button (only visible on mobile) -->
+    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+
+    <ul class="nav-links">
+      <li><a href="{% url 'home' %}">Home</a></li>
+      <li><a href="{% url 'about' %}">About Us</a></li>
+      <li><a href="{% url 'mood' %}">Mood Tracker</a></li>
+      <li><a href="{% url 'edoc' %}">EDoc</a></li>
+      <li><a href="{% url 'chatbot' %}">Eviee AI</a></li>
+
+      {% if user.is_authenticated %}
+      <li><a href="#">Welcome, {{ user.username }}</a></li>
+      <li><a href="{% url 'logout_page' %}">Logout</a></li>
+      {% else %}
+      <li><a href="{% url 'signup_page' %}">Sign up/Login</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+</header>
+
+
+      <div class="carousel">
+        <div class="carousel-container">
+          <div class="carousel-slide">
+            <img src="{% static 'images/inspo4.jpg' %}" alt="Nature" />
+            <div class="carousel-content"></div>
+          </div>
+          <div class="carousel-slide">
+            <img src="{% static 'images/inspo5.jpg' %}" alt="Technology" />
+            <div class="carousel-content"></div>
+          </div>
+          <div class="carousel-slide">
+            <img src="{% static 'images/inspo3.jpg' %}" alt="Business" />
+            <div class="carousel-content"></div>
+          </div>
+        </div>
+        <button class="carousel-btn prev">&lt;</button>
+        <button class="carousel-btn next">&gt;</button>
+        <div class="carousel-dots"></div>
+      </div>
+
+      <main>
+        <section class="hero">
+          <h1>Welcome to Our Website</h1>
+          <p>Creating amazing digital experiences</p>
+          <button id="cta-button"><a href="{% url 'about' %}">About Us</a></button>
+        </section>
+
+        <section class="features">
+          <div class="feature-card">
+            <h3>Innovation</h3>
+            <p>Pushing boundaries with creative solutions</p>
+          </div>
+          <div class="feature-card">
+            <h3>Quality</h3>
+            <p>Delivering excellence in every project</p>
+          </div>
+          <div class="feature-card">
+            <h3>Support</h3>
+            <p>24/7 dedicated customer service</p>
+          </div>
+        </section>
+      </main>
+
+      <footer>
+        <p>&copy; 2025 Eunoia. All rights reserved.</p>
+      </footer>
+    </div>
+    <script>
+  function toggleMenu() {
+    document.querySelector(".nav-links").classList.toggle("active");
+  }
+</script>
+
+  </body>
+</html>

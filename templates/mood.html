@@ -1,0 +1,271 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mood Tracker & Daily Challenge</title>
+    <link rel="stylesheet" href="{% static 'css/mood.css' %}" />
+  </head>
+  <body>
+    {% comment %} <a href="{% url 'home' %}" class="back-symbol">< Back to home </a> {% endcomment %}
+    <header>
+  <nav>
+    <a href="{% url 'index' %}">
+      <img
+        src="{% static 'images/Eunoia_Logo (1).png' %}"
+        alt="Eunoia"
+        width="50"
+        height="50"
+      />
+    </a>
+    <div class="logo">&nbsp;&nbsp;Eunoia</div>
+
+    <!-- Hamburger Menu Button (only visible on mobile) -->
+    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+
+    <ul class="nav-links">
+      <li><a href="{% url 'home' %}">Home</a></li>
+      <li><a href="{% url 'about' %}">About Us</a></li>
+      {% comment %} <li><a href="{% url 'mood' %}">Mood Tracker</a></li> {% endcomment %}
+      <li><a href="{% url 'edoc' %}">EDoc</a></li>
+      <li><a href="{% url 'chatbot' %}">Eviee AI</a></li>
+
+      {% comment %} {% if user.is_authenticated %}
+      <li><a href="#">Welcome, {{ user.username }}</a></li>
+      <li><a href="{% url 'logout_page' %}">Logout</a></li>
+      {% else %}
+      <li><a href="{% url 'signup_page' %}">Sign up/Login</a></li>
+      {% endif %} {% endcomment %}
+    </ul>
+  </nav>
+</header>
+
+    <div class="container">
+      <h1>Mood Tracker & Daily Challenge</h1>
+      
+      <div class="mood-grid">
+        <button class="mood-btn" onclick="addMood('Happy')">
+          <span class="mood-icon">😊</span>
+          <span class="mood-label">Happy</span>
+        </button>
+        <button class="mood-btn" onclick="addMood('Sad')">
+          <span class="mood-icon">😢</span>
+          <span class="mood-label">Sad</span>
+        </button>
+        <button class="mood-btn" onclick="addMood('Anxious')">
+          <span class="mood-icon">😰</span>
+          <span class="mood-label">Anxious</span>
+        </button>
+        <button class="mood-btn" onclick="addMood('Stressed')">
+          <span class="mood-icon">😫</span>
+          <span class="mood-label">Stressed</span>
+        </button>
+        <button class="mood-btn" onclick="addMood('Calm')">
+          <span class="mood-icon">😌</span>
+          <span class="mood-label">Calm</span>
+        </button>
+      </div>
+
+      <div class="history-box">
+        <h2>Mood History</h2>
+        <div id="history-list">
+          <div class="empty-state">
+            No moods recorded yet. Start by selecting your current mood above!
+          </div>
+        </div>
+        <button class="clear-btn" onclick="clearHistory()">Clear History</button>
+      </div>
+    </div>
+
+    <!-- Challenge Popup -->
+    <div class="overlay" id="overlay"></div>
+    <div class="popup" id="challenge-popup">
+      <h2>Your Daily Challenge</h2>
+      <p id="challenge-text">Your challenge will appear here.</p>
+      <button onclick="closePopup()">Got It!</button>
+    </div>
+
+<script>
+  const historyList = document.getElementById("history-list");
+  const overlay = document.getElementById("overlay");
+  const popup = document.getElementById("challenge-popup");
+  const challengeText = document.getElementById("challenge-text");
+  const historyBox = document.querySelector(".history-box");
+
+  // Daily challenges
+  const challenges = {
+    Happy: [
+      "Write a thank-you note.",
+      "Sing your favorite song.",
+      "Try a new hobby.",
+      "Smile at a stranger.",
+      "Give yourself a compliment.",
+    ],
+    Sad: [
+      "Write a letter to yourself.",
+      "Take a nature walk.",
+      "Listen to calming music.",
+      "Call a close friend.",
+      "Watch a feel-good movie.",
+    ],
+    Anxious: [
+      "Breathe deeply for 2 minutes.",
+      "Write down your worries.",
+      "Stretch for 5 minutes.",
+      "Listen to soothing sounds.",
+      "Take a 5-minute walk.",
+    ],
+    Stressed: [
+      "Take a deep breath.",
+      "Go for a short walk.",
+      "Write one goal for today.",
+      "Listen to relaxing music.",
+      "Drink a glass of water.",
+    ],
+    Calm: [
+      "Enjoy a quiet moment.",
+      "Read a chapter of a book.",
+      "Drink herbal tea.",
+      "Listen to soft music.",
+      "Write a short poem.",
+    ],
+  };
+
+  // --- CSRF Helper ---
+  function getCsrfToken() {
+    const name = "csrftoken=";
+    const cookies = document.cookie.split(";");
+    for (let c of cookies) {
+      let cookie = c.trim();
+      if (cookie.startsWith(name)) {
+        return cookie.substring(name.length, cookie.length);
+      }
+    }
+    return "";
+  }
+
+  // --- Add mood ---x
+  async function addMood(mood) {
+    const response = await fetch("/mood/api/moods/add/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": getCsrfToken(),
+      },
+      body: JSON.stringify({ mood }),
+    });
+
+    if (response.ok) {
+      generateChallenge(mood);
+      loadMoods();
+    } else {
+      alert("Error saving mood. Please try again.");
+    }
+  }
+
+  // --- Load moods from backend ---
+async function loadMoods() {
+  const historyList = document.getElementById("history-list");
+  const historyBox = document.querySelector(".history-box");
+
+  try {
+    const response = await fetch("/mood/api/moods/get/");
+    if (!response.ok) throw new Error("Failed to fetch moods");
+
+    const moods = await response.json();
+    console.log("📌 Fetched moods:", moods);
+
+    if (!Array.isArray(moods) || moods.length === 0) {
+      historyBox.classList.remove("show"); // hide if no moods
+      historyList.innerHTML = `
+        <div class="empty-state">
+          No moods recorded yet. Start by selecting your current mood above!
+        </div>`;
+    } else {
+      historyBox.classList.add("show"); // show if moods exist
+      historyList.innerHTML = moods
+        .map((entry) => {
+          // If backend sends ISO date → format nicely
+          let formatted = entry.timestamp;
+          try {
+            const date = new Date(entry.timestamp);
+            if (!isNaN(date)) {
+              formatted = date.toLocaleString("en-IN", {
+                weekday: "short",
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              });
+            }
+          } catch (e) {
+            // fallback → just show raw string
+            formatted = entry.timestamp;
+          }
+
+          return `
+            <div class="history-entry">
+              <span>${entry.mood}</span>
+              <span class="timestamp">${formatted}</span>
+            </div>`;
+        })
+        .join("");
+    }
+  } catch (error) {
+    console.error("Error loading moods:", error);
+    historyList.innerHTML = `<div class="error-state">⚠️ Could not load mood history.</div>`;
+    historyBox.classList.remove("show"); // hide on error
+  }
+}
+
+
+
+  // --- Clear moods from backend ---
+  async function clearHistory() {
+    const response = await fetch("/mood/api/moods/clear/", {
+      method: "POST",
+      headers: {
+        "X-CSRFToken": getCsrfToken(),
+      },
+    });
+
+    if (response.ok) {
+      loadMoods();
+    }
+  }
+
+  // --- Challenge popup ---
+  function generateChallenge(mood) {
+    const challengeList = challenges[mood];
+    if (!challengeList) return;
+
+    const randomChallenge =
+      challengeList[Math.floor(Math.random() * challengeList.length)];
+    challengeText.innerText = randomChallenge;
+    overlay.classList.add("show");
+    popup.classList.add("show");
+  }
+
+  function closePopup() {
+    overlay.classList.remove("show");
+    popup.classList.remove("show");
+  }
+
+  // --- Toggle menu (mobile) ---
+  function toggleMenu() {
+    const navLinks = document.querySelector(".nav-links");
+    if (navLinks) {
+      navLinks.classList.toggle("active");
+    }
+  }
+
+  // --- Run on page load ---
+document.addEventListener("DOMContentLoaded", () => {
+  loadMoods();
+});
+
+</script>
+ </body>
+</html>
