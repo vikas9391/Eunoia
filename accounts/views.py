@@ -1,4 +1,5 @@
-import re 
+import re
+import os
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
@@ -10,9 +11,10 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.template.loader import render_to_string
 from django.contrib.sites.shortcuts import get_current_site
-from django.core.mail import EmailMultiAlternatives  # ✅ NEW
+from django.core.mail import EmailMultiAlternatives
 from django.contrib.auth.tokens import default_token_generator
 from django.http import HttpResponse
+
 
 def login_page(request):
     if request.user.is_authenticated:
@@ -40,6 +42,7 @@ def login_page(request):
 
     return render(request, 'login.html')
 
+
 def signup_page(request):
     logout(request)
     if request.method == "POST":
@@ -51,7 +54,6 @@ def signup_page(request):
         if password != confirm_pass:
             messages.error(request, "Passwords do not match.")
             return render(request, 'signup.html')
-
         if len(password) < 8:
             messages.error(request, "Password must be at least 8 characters long.")
             return render(request, 'signup.html')
@@ -80,7 +82,6 @@ def signup_page(request):
             subject = 'Activate Your Eunoia Account'
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             token = default_token_generator.make_token(user)
-
             activation_link = f"http://{current_site.domain}/auth/activate/{uid}/{token}/"
 
             message = render_to_string('activate_email.html', {
@@ -88,8 +89,8 @@ def signup_page(request):
                 'activation_link': activation_link,
             })
 
-            # ✅ Updated to HTML email (instead of plain send_mail)
-            email_msg = EmailMultiAlternatives(subject, '', 'vikas93912@gmail.com', [user.email])
+            from_email = os.getenv('DEFAULT_FROM_EMAIL', 'onboarding@resend.dev')
+            email_msg = EmailMultiAlternatives(subject, '', from_email, [user.email])
             email_msg.attach_alternative(message, "text/html")
             email_msg.send()
 
@@ -104,6 +105,7 @@ def signup_page(request):
             return render(request, 'signup.html')
 
     return render(request, 'signup.html')
+
 
 def activate_account(request, uidb64, token):
     try:
@@ -120,10 +122,12 @@ def activate_account(request, uidb64, token):
     else:
         return HttpResponse('Activation link is invalid or expired.')
 
+
 def logout_page(request):
     logout(request)
     request.session.flush()
     return redirect('index')
+
 
 @never_cache
 @login_required(login_url='login_page')

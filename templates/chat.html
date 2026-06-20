@@ -3,92 +3,579 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Eunoia Chatbot</title>
-  <link rel="stylesheet" href="{% static 'css/chat.css' %}">
-  <script src="{% static 'js/chat.js' %}" defer></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Eunoia — Eviee AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --primary: #3a7d5c;
+      --secondary: #2d6b4a;
+      --accent: #4a9e70;
+      --bg: #f0f7f4;
+      --surface: #ffffff;
+      --border: rgba(58,125,92,0.12);
+      --text: #1a4a2e;
+      --muted: #6b9e82;
+      --light: #e8f5ee;
+      --grad: linear-gradient(135deg, var(--secondary), var(--accent));
+      --sh-sm: 0 2px 8px rgba(58,125,92,0.08);
+      --sh-md: 0 4px 14px rgba(58,125,92,0.22);
+      --sh-lg: 0 6px 20px rgba(58,125,92,0.35);
+      --radius: 10px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 48px;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 2px 16px rgba(58,125,92,0.06);
+    }
+    .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-brand img { width: 40px; height: 40px; border-radius: var(--radius); box-shadow: var(--sh-md); }
+    .nav-brand span { font-size: 18px; font-weight: 600; color: var(--text); }
+    .nav-links { display: flex; align-items: center; gap: 8px; list-style: none; }
+    .nav-links a {
+      text-decoration: none; color: var(--muted); font-weight: 500; font-size: 14px;
+      padding: 7px 14px; border-radius: 8px; transition: background 0.2s, color 0.2s;
+    }
+    .nav-links a:hover { background: var(--light); color: var(--primary); }
+    .nav-links .nav-cta { color: #fff; background: var(--grad); padding: 8px 18px; border-radius: 9px; box-shadow: var(--sh-md); }
+    .nav-links .nav-cta:hover { box-shadow: var(--sh-lg); }
+    .menu-toggle { display: none; background: none; border: none; font-size: 24px; color: var(--text); cursor: pointer; }
+
+    /* ── Layout ── */
+    .page-body { display: flex; height: calc(100vh - 73px); }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: 260px; min-width: 260px; background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; padding: 20px 14px; gap: 12px;
+      overflow-y: auto; transition: transform 0.3s ease; box-shadow: 2px 0 16px rgba(58,125,92,0.06);
+    }
+    .sidebar.closed { transform: translateX(-100%); position: fixed; top: 73px; left: 0; height: calc(100vh - 73px); z-index: 200; }
+    .sidebar-header { display: flex; align-items: center; justify-content: space-between; }
+    .sidebar-header h3 { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); }
+    .close-btn { background: none; border: none; font-size: 20px; color: var(--muted); cursor: pointer; line-height: 1; padding: 2px 6px; border-radius: 6px; transition: background 0.2s, color 0.2s; }
+    .close-btn:hover { background: #fef2f2; color: #cc3333; }
+    .new-chat-btn {
+      display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%;
+      padding: 11px; background: var(--grad); color: #fff; border: none; border-radius: var(--radius);
+      font-size: 14px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 14px rgba(58,125,92,0.2); transition: box-shadow 0.2s;
+    }
+    .new-chat-btn:hover { box-shadow: 0 6px 20px rgba(58,125,92,0.32); }
+    #history-list { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+    .chat-session {
+      display: flex; justify-content: space-between; align-items: center; padding: 9px 10px;
+      background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius);
+      transition: background 0.18s, box-shadow 0.18s; cursor: pointer;
+    }
+    .chat-session:hover { background: var(--light); box-shadow: var(--sh-sm); }
+    .chat-session.active { background: var(--light); border-color: rgba(58,125,92,0.25); }
+    .chat-title { flex: 1; font-size: 13px; font-weight: 500; color: var(--text); }
+    .rename-input { flex: 1; padding: 4px 8px; font-size: 13px; border: 1.5px solid var(--primary); border-radius: 6px; background: #fff; outline: none; }
+    .chat-actions { position: relative; }
+    .menu-btn { background: none; border: none; font-size: 16px; color: var(--muted); cursor: pointer; padding: 2px 6px; border-radius: 6px; transition: background 0.2s; }
+    .menu-btn:hover { background: var(--border); }
+    .dropdown-menu {
+      position: absolute; right: 0; top: 26px; background: #fff; border: 1px solid var(--border);
+      border-radius: var(--radius); box-shadow: 0 8px 24px rgba(58,125,92,0.15); min-width: 140px; z-index: 10; overflow: hidden;
+    }
+    .dropdown-menu button { background: none; border: none; padding: 9px 14px; text-align: left; cursor: pointer; width: 100%; font-size: 13px; color: var(--text); transition: background 0.15s; }
+    .dropdown-menu button:hover { background: var(--light); }
+    .hidden { display: none !important; }
+
+    /* ── Chat Area ── */
+    .chat-wrapper { flex: 1; display: flex; flex-direction: column; min-width: 0; padding: 20px; gap: 16px; }
+    .chat-topbar { display: flex; align-items: center; gap: 10px; }
+    .icon-btn {
+      display: inline-flex; align-items: center; justify-content: center; background: var(--surface);
+      border: 1px solid var(--border); color: var(--primary); width: 38px; height: 38px; border-radius: var(--radius);
+      cursor: pointer; font-size: 16px; font-weight: 600; text-decoration: none; transition: background 0.2s, box-shadow 0.2s; box-shadow: var(--sh-sm);
+    }
+    .icon-btn:hover { background: var(--light); box-shadow: 0 4px 14px rgba(58,125,92,0.15); }
+    .chat-title-bar { flex: 1; text-align: center; font-size: 16px; font-weight: 600; color: var(--text); letter-spacing: 0.2px; }
+    .chat-body {
+      flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 20px;
+      overflow-y: auto; display: flex; flex-direction: column; gap: 10px; box-shadow: inset 0 2px 8px rgba(58,125,92,0.04);
+    }
+    .bubble { padding: 12px 16px; border-radius: 14px; max-width: 78%; font-size: 14px; line-height: 1.65; word-break: break-word; }
+    .bubble.user { background: var(--grad); color: #fff; margin-left: auto; border-bottom-right-radius: 4px; }
+    .bubble.assistant { background: var(--bg); color: var(--text); border: 1px solid var(--border); margin-right: auto; border-bottom-left-radius: 4px; }
+    .empty-state { margin: auto; text-align: center; color: var(--muted); font-size: 14px; }
+    .input-area {
+      display: flex; gap: 8px; align-items: flex-end; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; padding: 10px; box-shadow: var(--sh-sm);
+    }
+    .input-area textarea {
+      flex: 1; padding: 10px 12px; border-radius: var(--radius); border: 1.5px solid #d4ead9; font-size: 14px;
+      min-height: 44px; max-height: 130px; resize: none; background: var(--bg); color: var(--text); outline: none;
+      font-family: 'Inter', sans-serif; transition: border-color 0.2s;
+    }
+    .input-area textarea:focus { border-color: var(--primary); background: #fff; }
+    .input-area textarea:disabled { opacity: 0.6; }
+    .send-btn, .mic-btn { border-radius: var(--radius); cursor: pointer; font-size: 14px; white-space: nowrap; }
+    .send-btn { background: var(--grad); color: #fff; border: none; padding: 11px 20px; font-weight: 600; box-shadow: var(--sh-md); transition: box-shadow 0.2s; }
+    .send-btn:hover { box-shadow: var(--sh-lg); }
+    .send-btn:disabled { opacity: 0.6; cursor: not-allowed; box-shadow: none; }
+    .mic-btn { background: var(--bg); color: var(--primary); border: 1.5px solid #d4ead9; padding: 11px 14px; font-size: 15px; transition: border-color 0.2s, background 0.2s; }
+    .mic-btn:hover { border-color: var(--primary); background: var(--light); }
+    .footer { text-align: center; font-size: 12px; color: #a8c9b8; padding-top: 6px; }
+
+    /* ── Typing indicator ── */
+    .typing-indicator { display: inline-flex; align-items: center; gap: 4px; }
+    .typing-indicator span { width: 6px; height: 6px; background: var(--primary); border-radius: 50%; animation: blink 1.2s infinite; }
+    .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes blink { 0%,80%,100% { transform: scale(0.4); opacity: 0.4; } 40% { transform: scale(1); opacity: 1; } }
+
+    /* ── Popups ── */
+    .popup-backdrop { position: fixed; inset: 0; background: rgba(26,74,46,0.35); z-index: 2000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
+    .popup-box { background: #fff; border-radius: 18px; min-width: 300px; max-width: 90vw; box-shadow: 0 24px 60px rgba(58,125,92,0.22); padding: 32px 28px 24px; text-align: center; }
+    .popup-icon { font-size: 2rem; margin-bottom: 10px; }
+    .popup-title { font-size: 17px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+    .popup-msg { font-size: 14px; color: var(--muted); }
+    .popup-actions { display: flex; gap: 10px; justify-content: center; margin-top: 20px; }
+    .popup-btn { padding: 10px 24px; border: none; border-radius: 9px; font-size: 14px; font-weight: 600; cursor: pointer; transition: box-shadow 0.2s; }
+    .popup-btn.primary { background: var(--grad); color: #fff; box-shadow: var(--sh-md); }
+    .popup-btn.primary:hover { box-shadow: 0 6px 18px rgba(58,125,92,0.38); }
+    .popup-btn.ghost { background: var(--bg); color: var(--muted); border: 1px solid var(--border); }
+    .popup-btn.ghost:hover { background: var(--light); }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      nav { padding: 14px 20px; }
+      .menu-toggle { display: block; }
+      .nav-links {
+        display: none; position: absolute; top: 100%; left: 0; right: 0; background: #fff;
+        flex-direction: column; padding: 16px; gap: 4px; box-shadow: 0 8px 24px rgba(58,125,92,0.12); border-top: 1px solid var(--border);
+      }
+      .nav-links.active { display: flex; }
+      .sidebar { position: fixed; top: 73px; left: 0; height: calc(100vh - 73px); z-index: 200; transform: translateX(-100%); }
+      .sidebar:not(.closed) { transform: translateX(0); }
+      .chat-wrapper { padding: 12px; }
+    }
+    @media (max-width: 600px) {
+      .bubble { max-width: 92%; font-size: 13px; }
+      .chat-body { padding: 14px; }
+      .send-btn { padding: 11px 14px; }
+    }
+  </style>
 </head>
 <body>
-       <header>
-  <nav>
-    <a href="{% url 'index' %}">
-      <img
-        src="{% static 'images/Eunoia_Logo (1).png' %}"
-        alt="Eunoia"
-        width="50"
-        height="50"
-      />
-    </a>
-    <div class="logo">&nbsp;&nbsp;Eunoia</div>
 
-    <!-- Hamburger Menu Button (only visible on mobile) -->
-    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+<!-- ── Nav ── -->
+<nav>
+  <a href="{% url 'index' %}" class="nav-brand">
+    <img src="{% static 'images/Eunoia_Logo (1).png' %}" alt="Eunoia"/>
+    <span>Eunoia</span>
+  </a>
+  <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+  <ul class="nav-links">
+    <li><a href="{% url 'home' %}">Home</a></li>
+    <li><a href="{% url 'about' %}">About Us</a></li>
+    <li><a href="{% url 'mood' %}">Mood Tracker</a></li>
+    <li><a href="{% url 'edoc' %}">EDoc</a></li>
+    {% if user.is_authenticated %}
+    <li><a href="{% url 'logout_page' %}" class="nav-cta">Logout</a></li>
+    {% else %}
+    <li><a href="{% url 'signup_page' %}" class="nav-cta">Sign up / Login</a></li>
+    {% endif %}
+  </ul>
+</nav>
 
-    <ul class="nav-links">
-      <li><a href="{% url 'home' %}">Home</a></li>
-      <li><a href="{% url 'about' %}">About Us</a></li>
-      <li><a href="{% url 'mood' %}">Mood Tracker</a></li>
-      <li><a href="{% url 'edoc' %}">EDoc</a></li>
-      {% comment %} <li><a href="{% url 'chatbot' %}">Chatbot</a></li> {% endcomment %}
+<!-- ── Page Body ── -->
+<div class="page-body">
 
-      {% if user.is_authenticated %}
-      {% comment %} <li><a href="#">Welcome, {{ user.username }}</a></li> {% endcomment %}
-      <li><a href="{% url 'logout_page' %}">Logout</a></li>
-      {% else %}
-      <li><a href="{% url 'signup_page' %}">Sign up/Login</a></li>
-      {% endif %}
-    </ul>
-  </nav>
-</header>
-  <!-- 📜 Sidebar -->
-  <div class="sidebar closed" id="sidebar">
-    <button id="close-sidebar" class="close-btn">&times;</button>
-    <h3>Chat History</h3>
+  <!-- Sidebar -->
+  <aside class="sidebar closed" id="sidebar">
+    <div class="sidebar-header">
+      <h3>Chat History</h3>
+      <button class="close-btn" id="close-sidebar">&times;</button>
+    </div>
+    <button class="new-chat-btn" onclick="startNewChat()">＋ New Chat</button>
     <ul id="history-list"></ul>
-    <button onclick="startNewChat()" class="new-chat-btn">New chat</button>
-  </div>
+  </aside>
 
-  <!-- 💬 Chatbox -->
-  <div class="container full" id="main-container">
-    <div class="chat-container">
-      <div class="button-row">
-  <a href="{% url 'home' %}" class="back-symbol">&lt;</a>
-  <button id="toggle-btn" class="toggle-btn">☰</button>
+  <!-- Chat -->
+  <div class="chat-wrapper">
+    <div class="chat-topbar">
+      <a href="{% url 'home' %}" class="icon-btn" title="Back">←</a>
+      <button id="toggle-btn" class="icon-btn" title="Toggle sidebar">☰</button>
+      <div class="chat-title-bar">Eviee AI</div>
+    </div>
+
+    <div class="chat-body" id="chat-box"></div>
+
+    <div class="input-area">
+      <textarea id="user-input" rows="1" placeholder="Ask Eviee anything..."></textarea>
+      <button id="micBtn" class="mic-btn" title="Voice input">🎤</button>
+      <button id="send-btn" class="send-btn" onclick="sendMessage()">Send ↑</button>
+    </div>
+
+    <div class="footer" id="footer">Eviee AI · Eunoia</div>
+  </div>
 </div>
-      <h2>Eviee AI</h2> 
-      <div id="chat-box"></div>
-      <div class="input-area">
-        <textarea id="user-input" rows="2" placeholder="Ask anything..."></textarea>
-        {% comment %} <input id="file-input" type="file" accept="image/*" multiple /> {% endcomment %}
-        <button onclick="sendMessage()">Send</button>
-        <button id="micBtn" title="Speech to text">🎤</button>
-      </div>
-      <div class="footer" id="footer"></div>
-    </div>
-  </div>
 
-  <!-- 🔔 Custom Alert Popup -->
-  <div class="popup-backdrop" id="custom-alert" style="display:none;">
-    <div class="custom-alert">
-      <div class="popup-error-icon" style="display:none;" id="custom-alert-icon">❌</div>
-      <div class="custom-alert-title" id="custom-alert-title">Message</div>
-      <div id="custom-alert-msg"></div>
-      <button class="popup-btn" onclick="closeCustomAlert()">OK</button>
+<!-- Alert Popup -->
+<div class="popup-backdrop" id="custom-alert" style="display:none;">
+  <div class="popup-box">
+    <div class="popup-icon" id="custom-alert-icon" style="display:none;">❌</div>
+    <div class="popup-title" id="custom-alert-title">Message</div>
+    <div class="popup-msg" id="custom-alert-msg"></div>
+    <div class="popup-actions">
+      <button class="popup-btn primary" onclick="closeCustomAlert()">OK</button>
     </div>
   </div>
+</div>
 
-  <!-- ❔ Custom Confirm Popup -->
-  <div class="popup-backdrop" id="custom-confirm" style="display:none;">
-    <div class="custom-confirm">
-      <div class="custom-confirm-title" id="custom-confirm-title">Confirm</div>
-      <div id="custom-confirm-msg"></div>
-      <button class="popup-btn" id="custom-confirm-yes">Yes</button>
-      <button class="popup-btn" id="custom-confirm-no">No</button>
+<!-- Confirm Popup -->
+<div class="popup-backdrop" id="custom-confirm" style="display:none;">
+  <div class="popup-box">
+    <div class="popup-title" id="custom-confirm-title">Confirm</div>
+    <div class="popup-msg" id="custom-confirm-msg"></div>
+    <div class="popup-actions">
+      <button class="popup-btn ghost" id="custom-confirm-no">Cancel</button>
+      <button class="popup-btn primary" id="custom-confirm-yes">Confirm</button>
     </div>
   </div>
-   <script>
-  function toggleMenu() {
-    document.querySelector(".nav-links").classList.toggle("active");
+</div>
+
+<script>
+/* ──────────────────────────────────────────────────────────────
+   API endpoints — single source of truth. Update these (and only
+   these) once the backend URLs are confirmed; nothing else below
+   references a raw path.
+   ────────────────────────────────────────────────────────────── */
+const API = {
+  sessions:   "/chatbot/api/chat/sessions/",
+  newSession: "/chatbot/api/chat/new/",
+  send:       "/chatbot/api/chat/send/",
+  messages:   id => `/chatbot/api/chat/messages/${id}/`,
+  rename:     id => `/chatbot/api/chat/session/${id}/rename/`,
+  clear:      id => `/chatbot/api/chat/session/${id}/clear/`,
+  delete:     id => `/chatbot/api/chat/session/${id}/delete/`,
+};
+
+let currentSessionId = null;
+let sessionHasMessages = false; // tracks whether the active session has ever had a message sent in it
+
+function getCookie(name) {
+  for (const c of document.cookie.split(";")) {
+    const t = c.trim();
+    if (t.startsWith(name + "=")) return decodeURIComponent(t.slice(name.length + 1));
   }
+  return null;
+}
+
+function typeEffect(element, text) {
+  let i = 0;
+  (function typing() {
+    if (i < text.length) {
+      element.innerHTML += text.charAt(i++);
+      setTimeout(typing, 20);
+      scrollToBottom();
+    }
+  })();
+}
+
+function scrollToBottom() {
+  const chatBox = document.getElementById("chat-box");
+  if (chatBox) chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+/* Deletes a session outright. `keepalive` is used when the call needs to
+   survive a page unload (tab close / navigation away). */
+async function deleteSession(id, keepalive = false) {
+  if (!id) return;
+  try {
+    await fetch(API.delete(id), {
+      method: "DELETE",
+      headers: { "X-CSRFToken": getCookie("csrftoken") },
+      keepalive,
+    });
+  } catch (err) {
+    console.error("Error deleting session:", err);
+  }
+}
+
+/* Core rule: a session that was created but never used (no message ever
+   sent in it) should not be left behind. Call this before navigating away
+   from the current session. */
+async function cleanupIfEmpty(keepalive = false) {
+  if (currentSessionId && !sessionHasMessages) {
+    await deleteSession(currentSessionId, keepalive);
+    currentSessionId = null;
+    sessionHasMessages = false;
+  }
+}
+
+async function sendMessage() {
+  const input = document.getElementById("user-input");
+  const sendBtn = document.getElementById("send-btn");
+  const msg = input.value.trim();
+  if (!msg || !currentSessionId) return;
+
+  const chatBox = document.getElementById("chat-box");
+  chatBox.querySelector(".empty-state")?.remove();
+  chatBox.innerHTML += `<div class="bubble user">${msg}</div>`;
+  scrollToBottom();
+  input.value = "";
+  input.disabled = true;
+  sendBtn.disabled = true;
+
+  const loaderDiv = document.createElement("div");
+  loaderDiv.className = "bubble assistant";
+  loaderDiv.innerHTML = `<div class="typing-indicator"><span></span><span></span><span></span></div>`;
+  chatBox.appendChild(loaderDiv);
+  scrollToBottom();
+
+  try {
+    const response = await fetch(API.send, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-CSRFToken": getCookie("csrftoken") },
+      body: JSON.stringify({ message: msg, session_id: currentSessionId }),
+    });
+    const data = await response.json();
+    sessionHasMessages = true;
+    loaderDiv.innerHTML = "";
+    typeEffect(loaderDiv, data.response || data.error || "No response.");
+  } catch (err) {
+    loaderDiv.innerHTML = "⚠️ Error loading response";
+    showCustomAlert("Error sending message: " + err.message, "Error", true);
+  } finally {
+    input.disabled = false;
+    sendBtn.disabled = false;
+    input.focus();
+    loadHistory();
+  }
+}
+
+/* autoSelect: on first load, jump into the most recent session, or start a
+   fresh one if the user has no sessions at all. */
+async function loadHistory(autoSelect = false) {
+  try {
+    const res = await fetch(API.sessions);
+    if (!res.ok) return;
+    const { sessions } = await res.json();
+    const list = document.getElementById("history-list");
+    list.innerHTML = "";
+
+    sessions.forEach(session => {
+      const li = document.createElement("li");
+      li.classList.add("chat-session");
+      li.dataset.id = session.session_id;
+      // Backend always returns a title (defaults to "New Chat", then gets set
+      // to the first message's text once one is sent) — no separate messages array here.
+      const rawTitle = (session.title || "New Chat").trim() || "New Chat";
+      const sessionName = rawTitle.length > 30 ? rawTitle.slice(0, 30) + "…" : rawTitle;
+      li.innerHTML = `
+        <span class="chat-title">${sessionName}</span>
+        <input class="rename-input hidden" type="text"/>
+        <div class="chat-actions">
+          <button class="menu-btn">⋮</button>
+          <div class="dropdown-menu hidden">
+            <button class="rename-btn">✏️ Rename</button>
+            <button class="clear-btn">🗑️ Clear</button>
+            <button class="delete-btn">❌ Delete</button>
+          </div>
+        </div>`;
+      li.querySelector(".chat-title").onclick = () => loadChat(session.session_id);
+      if (currentSessionId == session.session_id) li.classList.add("active");
+      li.querySelector(".menu-btn").addEventListener("click", e => {
+        e.stopPropagation();
+        li.querySelector(".dropdown-menu").classList.toggle("hidden");
+      });
+      list.appendChild(li);
+    });
+
+    document.addEventListener("click", () => {
+      document.querySelectorAll(".dropdown-menu").forEach(dd => dd.classList.add("hidden"));
+    }, { once: true });
+
+    if (autoSelect && !currentSessionId) {
+      if (sessions.length > 0) await loadChat(sessions[0].session_id);
+      else await startNewChat();
+    }
+  } catch (err) {
+    console.error("Error loading history:", err);
+  }
+}
+
+async function loadChat(sessionId) {
+  if (sessionId == currentSessionId) return;
+  await cleanupIfEmpty(); // drop the session we're leaving if it was never used
+  try {
+    const res = await fetch(API.messages(sessionId));
+    if (!res.ok) return;
+    const { conversation } = await res.json();
+    const chatBox = document.getElementById("chat-box");
+    chatBox.innerHTML = "";
+    currentSessionId = sessionId;
+    sessionHasMessages = !!conversation?.length;
+
+    if (!conversation?.length) {
+      chatBox.innerHTML = `<div class="empty-state">Start the conversation — ask Eviee anything.</div>`;
+    } else {
+      for (const msg of conversation) {
+        const div = document.createElement("div");
+        div.className = "bubble " + (msg.role === "user" ? "user" : "assistant");
+        chatBox.appendChild(div);
+        typeEffect(div, msg.text);
+      }
+    }
+    scrollToBottom();
+    loadHistory();
+  } catch (err) {
+    console.error("Error loading chat:", err);
+  }
+}
+
+async function startNewChat() {
+  // Don't pile up unused sessions: drop the current one if nothing was ever sent in it.
+  await cleanupIfEmpty();
+  try {
+    const res = await fetch(API.newSession, {
+      method: "POST",
+      headers: { "X-CSRFToken": getCookie("csrftoken") },
+    });
+    const data = await res.json();
+    if (data.session_id) {
+      currentSessionId = data.session_id;
+      sessionHasMessages = false;
+      document.getElementById("chat-box").innerHTML = `<div class="empty-state">Start the conversation — ask Eviee anything.</div>`;
+      loadHistory();
+    }
+  } catch (err) {
+    showCustomAlert("Error starting new chat: " + err.message, "Error", true);
+  }
+}
+
+/* ── Init ── */
+document.addEventListener("DOMContentLoaded", () => {
+  loadHistory(true);
+
+  const sidebar = document.getElementById("sidebar");
+  document.getElementById("toggle-btn").addEventListener("click", () => sidebar.classList.remove("closed"));
+  document.getElementById("close-sidebar").addEventListener("click", () => sidebar.classList.add("closed"));
+
+  const input = document.getElementById("user-input");
+  input.addEventListener("keydown", e => {
+    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+  });
+
+  const micBtn = document.getElementById("micBtn");
+  if (window.SpeechRecognition || window.webkitSpeechRecognition) {
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = "en-US";
+    micBtn.onclick = () => recognition.start();
+    recognition.onresult = e => { input.value = e.results[0][0].transcript; };
+  } else {
+    micBtn.disabled = true;
+    micBtn.title = "Speech recognition not supported";
+  }
+});
+
+// Clean up an empty session if the user closes/navigates away without sending anything.
+window.addEventListener("beforeunload", () => {
+  if (currentSessionId && !sessionHasMessages) deleteSession(currentSessionId, true);
+});
+
+/* ── Sidebar item actions: rename / clear / delete (event delegation) ── */
+document.addEventListener("click", e => {
+  if (e.target.classList.contains("menu-btn")) {
+    e.target.nextElementSibling.classList.toggle("hidden");
+  }
+
+  if (e.target.classList.contains("rename-btn")) {
+    const li = e.target.closest(".chat-session");
+    const title = li.querySelector(".chat-title");
+    const input = li.querySelector(".rename-input");
+    title.classList.add("hidden");
+    input.classList.remove("hidden");
+    input.value = title.textContent.trim();
+    input.focus();
+    const save = async () => {
+      const newName = input.value.trim();
+      if (newName) {
+        await fetch(API.rename(li.dataset.id), {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json", "X-CSRFToken": getCookie("csrftoken") },
+          body: JSON.stringify({ title: newName }),
+        });
+        title.textContent = newName;
+      }
+      input.classList.add("hidden");
+      title.classList.remove("hidden");
+    };
+    input.addEventListener("keydown", ev => {
+      if (ev.key === "Enter") { ev.preventDefault(); save(); }
+      if (ev.key === "Escape") { input.classList.add("hidden"); title.classList.remove("hidden"); }
+    });
+  }
+
+  if (e.target.classList.contains("clear-btn")) {
+    const li = e.target.closest(".chat-session");
+    customConfirm("Clear all messages in this session?", "Clear Chat", async ok => {
+      if (!ok) return;
+      try {
+        await fetch(API.clear(li.dataset.id), { method: "DELETE", headers: { "X-CSRFToken": getCookie("csrftoken") } });
+        if (currentSessionId == li.dataset.id) {
+          sessionHasMessages = false;
+          document.getElementById("chat-box").innerHTML = `<div class="empty-state">Start the conversation — ask Eviee anything.</div>`;
+        }
+        loadHistory();
+      } catch (err) {
+        showCustomAlert(err.message, "Error", true);
+      }
+    });
+  }
+
+  if (e.target.classList.contains("delete-btn")) {
+    const li = e.target.closest(".chat-session");
+    customConfirm("Delete this session?", "Delete Chat", async ok => {
+      if (!ok) return;
+      try {
+        await fetch(API.delete(li.dataset.id), { method: "DELETE", headers: { "X-CSRFToken": getCookie("csrftoken") } });
+        li.remove();
+        if (currentSessionId == li.dataset.id) {
+          currentSessionId = null;
+          sessionHasMessages = false;
+          document.getElementById("chat-box").innerHTML = "";
+          await startNewChat();
+        } else {
+          loadHistory();
+        }
+      } catch (err) {
+        showCustomAlert(err.message, "Error", true);
+      }
+    });
+  }
+});
+
+function toggleMenu() { document.querySelector(".nav-links").classList.toggle("active"); }
+
+function showCustomAlert(msg, title = "Message", isError = false) {
+  document.getElementById("custom-alert-msg").textContent = msg;
+  document.getElementById("custom-alert-title").textContent = title;
+  document.getElementById("custom-alert-icon").style.display = isError ? "block" : "none";
+  document.getElementById("custom-alert").style.display = "flex";
+}
+function closeCustomAlert() { document.getElementById("custom-alert").style.display = "none"; }
+
+function customConfirm(message, title = "Confirm", callback) {
+  document.getElementById("custom-confirm-title").textContent = title;
+  document.getElementById("custom-confirm-msg").textContent = message;
+  document.getElementById("custom-confirm").style.display = "flex";
+  document.getElementById("custom-confirm-yes").onclick = () => { document.getElementById("custom-confirm").style.display = "none"; callback(true); };
+  document.getElementById("custom-confirm-no").onclick = () => { document.getElementById("custom-confirm").style.display = "none"; callback(false); };
+}
 </script>
 </body>
 </html>

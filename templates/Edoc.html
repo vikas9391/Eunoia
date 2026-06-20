@@ -1,166 +1,273 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Edoc</title>
-    <link rel="stylesheet" href="{% static 'css/Edoc.css' %}" />
-  </head>
-  <body>
-    {% comment %} <a href="{% url 'home' %}" class="back-symbol">< Back to home </a> {% endcomment %}
-      <header>
-  <nav>
-    <a href="{% url 'index' %}">
-      <img
-        src="{% static 'images/Eunoia_Logo (1).png' %}"
-        alt="Eunoia"
-        width="50"
-        height="50"
-      />
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Eunoia — EDoc</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    .doctors-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 28px;
+    }
+    @media (min-width: 768px) {
+      .doctors-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (min-width: 1024px) {
+      .doctors-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .doctor-card {
+      background: #fff;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 4px 30px rgba(58,125,92,0.08);
+      border: 1px solid rgba(58,125,92,0.08);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .doctor-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 36px rgba(58,125,92,0.16);
+    }
+    .doctor-image {
+      height: 200px;
+      width: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .doctor-info { padding: 24px; }
+    .doctor-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .doctor-name {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1a4a2e;
+    }
+    .specialty-icon {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, #3a7d5c, #5ab584);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .specialty-icon svg { width: 18px; height: 18px; }
+    .doctor-specialty {
+      color: #4a7c5f;
+      font-weight: 500;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+    .doctor-experience {
+      color: #8ab89a;
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+    .book-button {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #2d6b4a, #4a9e70);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(58,125,92,0.25);
+      transition: box-shadow 0.2s ease;
+    }
+    .book-button:hover { box-shadow: 0 6px 22px rgba(58,125,92,0.35); }
+
+    @media (max-width: 760px) {
+      .menu-toggle { display: block !important; }
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: #fff;
+        flex-direction: column;
+        gap: 18px !important;
+        padding: 20px 0;
+        box-shadow: 0 6px 20px rgba(58,125,92,0.12);
+        z-index: 1100;
+      }
+      .nav-links.active { display: flex; }
+    }
+  </style>
+</head>
+<body style="margin:0;padding:0;font-family:'Inter',system-ui,sans-serif;min-height:100vh;display:flex;flex-direction:column;background:#f0f7f4;">
+
+<div style="position:fixed;inset:0;background:linear-gradient(145deg,#e8f5ee 0%,#f0f7f4 50%,#e0f0e8 100%);z-index:0;"></div>
+<div style="position:fixed;top:-120px;right:-80px;width:500px;height:500px;border-radius:50%;background:rgba(90,181,132,0.12);z-index:1;pointer-events:none;"></div>
+<div style="position:fixed;bottom:-150px;left:-100px;width:450px;height:450px;border-radius:50%;background:rgba(58,125,92,0.08);z-index:1;pointer-events:none;"></div>
+
+<nav style="position:relative;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:22px 48px;background:rgba(255,255,255,0.7);backdrop-filter:blur(12px);border-bottom:1px solid rgba(58,125,92,0.1);">
+  <div style="display:flex;align-items:center;gap:12px;">
+    <a href="{% url 'index' %}" style="text-decoration:none;display:flex;align-items:center;gap:12px;">
+      <img src="{% static 'images/Eunoia_Logo (1).png' %}" alt="Eunoia" width="48" height="48" style="border-radius:11px;box-shadow:0 4px 12px rgba(58,125,92,0.3);"/>
+      <span style="font-size:20px;font-weight:600;color:#1a4a2e;letter-spacing:0.2px;">Eunoia</span>
     </a>
-    <div class="logo">&nbsp;&nbsp;Eunoia</div>
+  </div>
 
-    <!-- Hamburger Menu Button (only visible on mobile) -->
-    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+  <button class="menu-toggle" onclick="toggleMenu()" style="display:none;background:none;border:none;font-size:26px;color:#1a4a2e;cursor:pointer;">☰</button>
 
-    <ul class="nav-links">
-      <li><a href="{% url 'home' %}">Home</a></li>
-      <li><a href="{% url 'about' %}">About Us</a></li>
-      <li><a href="{% url 'mood' %}">Mood Tracker</a></li>
-      {% comment %} <li><a href="{% url 'edoc' %}">EDoc</a></li> {% endcomment %}
-      <li><a href="{% url 'chatbot' %}">Eviee AI</a></li>
+  <ul class="nav-links" style="display:flex;align-items:center;gap:28px;list-style:none;margin:0;padding:0;">
+    <li><a href="{% url 'home' %}" style="font-size:15px;color:#4a7c5f;text-decoration:none;font-weight:500;">Home</a></li>
+    <li><a href="{% url 'about' %}" style="font-size:15px;color:#4a7c5f;text-decoration:none;font-weight:500;">About Us</a></li>
+    <li><a href="{% url 'mood' %}" style="font-size:15px;color:#4a7c5f;text-decoration:none;font-weight:500;">Mood Tracker</a></li>
+    <li><a href="{% url 'chatbot' %}" style="font-size:15px;color:#4a7c5f;text-decoration:none;font-weight:500;">Eviee AI</a></li>
+    {% if user.is_authenticated %}
+    <li><a href="{% url 'logout_page' %}" style="font-size:15px;color:#fff;text-decoration:none;font-weight:500;background:linear-gradient(135deg,#3a7d5c,#5ab584);padding:10px 24px;border-radius:9px;box-shadow:0 2px 10px rgba(58,125,92,0.25);">Logout</a></li>
+    {% else %}
+    <li><a href="{% url 'signup_page' %}" style="font-size:15px;color:#fff;text-decoration:none;font-weight:500;background:linear-gradient(135deg,#3a7d5c,#5ab584);padding:10px 24px;border-radius:9px;box-shadow:0 2px 10px rgba(58,125,92,0.25);">Sign up/Login</a></li>
+    {% endif %}
+  </ul>
+</nav>
 
-      {% comment %} {% if user.is_authenticated %}
-      <li><a href="#">Welcome, {{ user.username }}</a></li>
-      <li><a href="{% url 'logout_page' %}">Logout</a></li>
-      {% else %}
-      <li><a href="{% url 'signup_page' %}">Sign up/Login</a></li>
-      {% endif %} {% endcomment %}
-    </ul>
-  </nav>
-</header>
-    <div class="container">
-      <div class="header">
-        <h1>Our Specialist Doctors</h1>
-        <p>Expert healthcare professionals at your service</p>
+<main style="position:relative;z-index:10;flex:1;">
+  <div style="max-width:1200px;margin:0 auto;padding:56px 24px 80px;">
+
+    <div style="text-align:center;margin-bottom:48px;">
+      <div style="width:68px;height:68px;background:linear-gradient(135deg,#3a7d5c,#5ab584);border-radius:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;box-shadow:0 8px 28px rgba(58,125,92,0.25);">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
       </div>
-
-      <div class="doctors-grid" id="doctorsGrid">
-        <!-- Doctors will be inserted here by JavaScript -->
-      </div>
+      <h1 style="font-size:34px;font-weight:600;color:#1a4a2e;margin-bottom:10px;letter-spacing:-0.3px;">Our Specialist Doctors</h1>
+      <p style="font-size:16px;color:#6b9e82;">Expert healthcare professionals at your service</p>
     </div>
 
-    <script>
-      const doctors = [
-        {
-          name: "Dr. Sarah Johnson",
-          specialty: "Psychologist",
-          experience: "15 years",
-          icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>`,
-          image:
-            "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=400",
-        },
-        {
-          name: "Dr. Michael Chen",
-          specialty: "Psychiatrist",
-          experience: "12 years",
-          icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/></svg>`,
-          image:
-            "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&q=80&w=400",
-        },
-        {
-          name: "Dr. Emily Rodriguez",
-          specialty: "Psychologist",
-          experience: "10 years",
-          icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 15.5v-8a2 2 0 0 0-2-2h-1a2 2 0 0 0-2 2v8"/><path d="M5 15.5v-8a2 2 0 0 1 2-2h1a2 2 0 0 1 2 2v8"/><path d="M4 15.5h16"/><path d="M4 8.5h16"/></svg>`,
-          image:
-            "https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&q=80&w=400",
-        },
-        {
-          name: "Dr. James Wilson",
-          specialty: "Psychiatrist",
-          experience: "14 years",
-          icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>`,
-          image:
-            "https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&q=80&w=400",
-        },
-        {
-          name: "Dr. Lisa Thompson",
-          specialty: "Psychiatrist",
-          experience: "8 years",
-          icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/><path d="M8 15v1a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6v-4"/><circle cx="20" cy="10" r="2"/></svg>`,
-          image:
-            "https://images.unsplash.com/photo-1527613426441-4da17471b66d?auto=format&fit=crop&q=80&w=400",
-        },
-        {
-          name: "Dr. David Park",
-          specialty: "Psychologist",
-          experience: "11 years",
-          icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h.01"/><path d="M15 12h.01"/><path d="M10 16c.5.3 1.2.5 2 .5s1.5-.2 2-.5"/><path d="M19 6.3a9 9 0 0 1 1.8 3.9 2 2 0 0 1 0 3.6 9 9 0 0 1-17.6 0 2 2 0 0 1 0-3.6A9 9 0 0 1 12 3c2 0 3.5 1.1 3.5 2.5s-.9 2.5-2 2.5c-.8 0-1.5-.4-1.5-1"/></svg>`,
-          image:
-            "https://images.unsplash.com/photo-1651008376811-b90baee60c1f?auto=format&fit=crop&q=80&w=400",
-        },
-        {
-          name: "Dr. Rachel Martinez",
-          specialty: "Psychologist",
-          experience: "9 years",
-          icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>`,
-          image:
-            "https://images.unsplash.com/photo-1622902046580-2b47f47f5471?auto=format&fit=crop&q=80&w=400",
-        },
-        {
-          name: "Dr. Robert Kim",
-          specialty: "Psychiatrist",
-          experience: "16 years",
-          icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>`,
-          image:
-            "https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&q=80&w=400",
-        },
-        {
-          name: "Dr. Amanda Foster",
-          specialty: "Psychiatrist",
-          experience: "13 years",
-          icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v8"/><path d="M4 10h16"/><path d="M12 14v8"/><circle cx="12" cy="10" r="2"/></svg>`,
-          image:
-            "https://images.unsplash.com/photo-1642391963835-6f6bc5d1c5b7?auto=format&fit=crop&q=80&w=400",
-        },
-      ];
-
-      function createDoctorCard(doctor) {
-        return `
-    <div class="doctor-card">
-      <img src="${doctor.image}" alt="${doctor.name}" class="doctor-image">
-      <div class="doctor-info">
-        <div class="doctor-header">
-          <h2 class="doctor-name">${doctor.name}</h2>
-          <div class="specialty-icon">${doctor.icon}</div>
-        </div>
-        <p class="doctor-specialty">${doctor.specialty}</p>
-        <p class="doctor-experience">Experience: ${doctor.experience}</p>
-        <button class="book-button" onclick="bookAppointment('${doctor.name}')">
-          Book Appointment
-        </button>
-      </div>
+    <div class="doctors-grid" id="doctorsGrid">
+      <!-- Doctors will be inserted here by JavaScript -->
     </div>
-  `;
-      }
+  </div>
+</main>
 
-      function bookAppointment(doctorName) {
-        alert(`Booking appointment with ${doctorName}`);
-      }
+<footer style="position:relative;z-index:10;text-align:center;padding:28px 20px;background:rgba(255,255,255,0.7);backdrop-filter:blur(12px);border-top:1px solid rgba(58,125,92,0.1);">
+  <p style="font-size:13px;color:#6b9e82;">&copy; 2025 Eunoia. All rights reserved.</p>
+</footer>
 
-      function renderDoctors() {
-        const doctorsGrid = document.getElementById("doctorsGrid");
-        doctorsGrid.innerHTML = doctors.map(createDoctorCard).join("");
-      }
-
-      // Initialize the grid when the page loads
-      document.addEventListener("DOMContentLoaded", renderDoctors);
-        function toggleMenu() {
+<script>
+  function toggleMenu() {
     document.querySelector(".nav-links").classList.toggle("active");
   }
-    </script>
-  </body>
+
+  const doctors = [
+    {
+      name: "Dr. Sarah Johnson",
+      specialty: "Psychologist",
+      experience: "15 years",
+      icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>`,
+      image:
+        "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=400",
+    },
+    {
+      name: "Dr. Michael Chen",
+      specialty: "Psychiatrist",
+      experience: "12 years",
+      icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/></svg>`,
+      image:
+        "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&q=80&w=400",
+    },
+    {
+      name: "Dr. Emily Rodriguez",
+      specialty: "Psychologist",
+      experience: "10 years",
+      icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 15.5v-8a2 2 0 0 0-2-2h-1a2 2 0 0 0-2 2v8"/><path d="M5 15.5v-8a2 2 0 0 1 2-2h1a2 2 0 0 1 2 2v8"/><path d="M4 15.5h16"/><path d="M4 8.5h16"/></svg>`,
+      image:
+        "https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&q=80&w=400",
+    },
+    {
+      name: "Dr. James Wilson",
+      specialty: "Psychiatrist",
+      experience: "14 years",
+      icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>`,
+      image:
+        "https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&q=80&w=400",
+    },
+    {
+      name: "Dr. Lisa Thompson",
+      specialty: "Psychiatrist",
+      experience: "8 years",
+      icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/><path d="M8 15v1a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6v-4"/><circle cx="20" cy="10" r="2"/></svg>`,
+      image:
+        "https://images.unsplash.com/photo-1527613426441-4da17471b66d?auto=format&fit=crop&q=80&w=400",
+    },
+    {
+      name: "Dr. David Park",
+      specialty: "Psychologist",
+      experience: "11 years",
+      icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h.01"/><path d="M15 12h.01"/><path d="M10 16c.5.3 1.2.5 2 .5s1.5-.2 2-.5"/><path d="M19 6.3a9 9 0 0 1 1.8 3.9 2 2 0 0 1 0 3.6 9 9 0 0 1-17.6 0 2 2 0 0 1 0-3.6A9 9 0 0 1 12 3c2 0 3.5 1.1 3.5 2.5s-.9 2.5-2 2.5c-.8 0-1.5-.4-1.5-1"/></svg>`,
+      image:
+        "https://images.unsplash.com/photo-1651008376811-b90baee60c1f?auto=format&fit=crop&q=80&w=400",
+    },
+    {
+      name: "Dr. Rachel Martinez",
+      specialty: "Psychologist",
+      experience: "9 years",
+      icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>`,
+      image:
+        "https://images.unsplash.com/photo-1622902046580-2b47f47f5471?auto=format&fit=crop&q=80&w=400",
+    },
+    {
+      name: "Dr. Robert Kim",
+      specialty: "Psychiatrist",
+      experience: "16 years",
+      icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>`,
+      image:
+        "https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&q=80&w=400",
+    },
+    {
+      name: "Dr. Amanda Foster",
+      specialty: "Psychiatrist",
+      experience: "13 years",
+      icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v8"/><path d="M4 10h16"/><path d="M12 14v8"/><circle cx="12" cy="10" r="2"/></svg>`,
+      image:
+        "https://images.unsplash.com/photo-1642391963835-6f6bc5d1c5b7?auto=format&fit=crop&q=80&w=400",
+    },
+  ];
+
+  function createDoctorCard(doctor) {
+    return `
+      <div class="doctor-card">
+        <img src="${doctor.image}" alt="${doctor.name}" class="doctor-image">
+        <div class="doctor-info">
+          <div class="doctor-header">
+            <h2 class="doctor-name">${doctor.name}</h2>
+            <div class="specialty-icon">${doctor.icon}</div>
+          </div>
+          <p class="doctor-specialty">${doctor.specialty}</p>
+          <p class="doctor-experience">Experience: ${doctor.experience}</p>
+          <button class="book-button" onclick="bookAppointment('${doctor.name}')">
+            Book Appointment
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  function bookAppointment(doctorName) {
+    alert(`Booking appointment with ${doctorName}`);
+  }
+
+  function renderDoctors() {
+    const doctorsGrid = document.getElementById("doctorsGrid");
+    doctorsGrid.innerHTML = doctors.map(createDoctorCard).join("");
+  }
+
+  // Initialize the grid when the page loads
+  document.addEventListener("DOMContentLoaded", renderDoctors);
+</script>
+</body>
 </html>

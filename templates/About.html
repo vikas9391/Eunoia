@@ -1,85 +1,351 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Eunoia</title>
-    <link rel="stylesheet" href="{% static 'css/about.css' %}" />
-    <script src="{% static 'js/about.js' %}"></script>
-  </head>
-  <body>
-    <div id="app">
-          <header>
-  <nav>
-    <a href="{% url 'index' %}">
-      <img
-        src="{% static 'images/Eunoia_Logo (1).png' %}"
-        alt="Eunoia"
-        width="50"
-        height="50"
-      />
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Eunoia — About Us</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    .carousel {
+      position: relative;
+      width: 100%;
+      height: 460px;
+      overflow: hidden;
+      max-width: 100vw;
+      min-height: 260px;
+    }
+    .carousel-container {
+      display: flex;
+      width: 300%;
+      height: 100%;
+      transition: transform 0.6s ease-in-out;
+    }
+    .carousel-slide {
+      position: relative;
+      width: 33.333%;
+      height: 100%;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .carousel-slide.slide-1 { background: linear-gradient(135deg, #2d6b4a, #5ab584); }
+    .carousel-slide.slide-2 { background: linear-gradient(135deg, #3a7d5c, #7fc89f); }
+    .carousel-slide.slide-3 { background: linear-gradient(135deg, #1a4a2e, #4a9e70); }
+
+    .carousel-content {
+      position: relative;
+      text-align: center;
+      color: #fff;
+      width: 90%;
+      max-width: 520px;
+      padding: 1rem;
+    }
+    .carousel-content h2 {
+      font-size: 2.4rem;
+      font-weight: 600;
+      margin-bottom: 14px;
+      letter-spacing: -0.3px;
+    }
+    .carousel-content p {
+      font-size: 1.05rem;
+      line-height: 1.6;
+      color: rgba(255,255,255,0.9);
+    }
+
+    .carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(6px);
+      color: #fff;
+      width: 44px;
+      height: 44px;
+      border: 1px solid rgba(255,255,255,0.3);
+      cursor: pointer;
+      font-size: 1.3rem;
+      transition: background-color 0.3s ease;
+      z-index: 2;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .carousel-btn:hover { background: rgba(255,255,255,0.35); }
+    .carousel-btn.prev { left: 1.5rem; }
+    .carousel-btn.next { right: 1.5rem; }
+
+    .carousel-dots {
+      position: absolute;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 0.5rem;
+      z-index: 2;
+    }
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.45);
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      border: none;
+    }
+    .dot.active { background: #fff; transform: scale(1.2); }
+
+    .feature-card { transition: opacity 0.5s ease, transform 0.5s ease; }
+    #cta-button { transition: transform 0.15s ease; }
+
+    @media (max-width: 760px) {
+      .carousel { height: 320px; }
+      .carousel-content h2 { font-size: 1.6rem; }
+      .carousel-content p { font-size: 0.95rem; }
+      .menu-toggle { display: block !important; }
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: #fff;
+        flex-direction: column;
+        gap: 18px !important;
+        padding: 20px 0;
+        box-shadow: 0 6px 20px rgba(58,125,92,0.12);
+        z-index: 1100;
+      }
+      .nav-links.active { display: flex; }
+    }
+  </style>
+</head>
+<body style="margin:0;padding:0;font-family:'Inter',system-ui,sans-serif;min-height:100vh;display:flex;flex-direction:column;background:#f0f7f4;">
+
+<div style="position:fixed;inset:0;background:linear-gradient(145deg,#e8f5ee 0%,#f0f7f4 50%,#e0f0e8 100%);z-index:0;"></div>
+<div style="position:fixed;top:-120px;right:-80px;width:500px;height:500px;border-radius:50%;background:rgba(90,181,132,0.12);z-index:1;pointer-events:none;"></div>
+<div style="position:fixed;bottom:-150px;left:-100px;width:450px;height:450px;border-radius:50%;background:rgba(58,125,92,0.08);z-index:1;pointer-events:none;"></div>
+
+<nav style="position:relative;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:22px 48px;background:rgba(255,255,255,0.7);backdrop-filter:blur(12px);border-bottom:1px solid rgba(58,125,92,0.1);">
+  <div style="display:flex;align-items:center;gap:12px;">
+    <a href="{% url 'index' %}" style="text-decoration:none;display:flex;align-items:center;gap:12px;">
+      <img src="{% static 'images/Eunoia_Logo (1).png' %}" alt="Eunoia" width="48" height="48" style="border-radius:11px;box-shadow:0 4px 12px rgba(58,125,92,0.3);"/>
+      <span style="font-size:20px;font-weight:600;color:#1a4a2e;letter-spacing:0.2px;">Eunoia</span>
     </a>
-    <div class="logo">&nbsp;&nbsp;Eunoia</div>
+  </div>
 
-    <!-- Hamburger Menu Button (only visible on mobile) -->
-    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+  <button class="menu-toggle" onclick="toggleMenu()" style="display:none;background:none;border:none;font-size:26px;color:#1a4a2e;cursor:pointer;">☰</button>
 
-    <ul class="nav-links">
-      <li><a href="{% url 'home' %}">Home</a></li>
-      {% comment %} <li><a href="{% url 'about' %}">About Us</a></li> {% endcomment %}
-      <li><a href="{% url 'mood' %}">Mood Tracker</a></li>
-      <li><a href="{% url 'edoc' %}">EDoc</a></li>
-      <li><a href="{% url 'chatbot' %}">Eviee AI</a></li>
+  <ul class="nav-links" style="display:flex;align-items:center;gap:28px;list-style:none;margin:0;padding:0;">
+    <li><a href="{% url 'home' %}" style="font-size:15px;color:#4a7c5f;text-decoration:none;font-weight:500;">Home</a></li>
+    <li><a href="{% url 'mood' %}" style="font-size:15px;color:#4a7c5f;text-decoration:none;font-weight:500;">Mood Tracker</a></li>
+    <li><a href="{% url 'edoc' %}" style="font-size:15px;color:#4a7c5f;text-decoration:none;font-weight:500;">EDoc</a></li>
+    <li><a href="{% url 'chatbot' %}" style="font-size:15px;color:#4a7c5f;text-decoration:none;font-weight:500;">Eviee AI</a></li>
+    {% if user.is_authenticated %}
+    <li><a href="{% url 'logout_page' %}" style="font-size:15px;color:#fff;text-decoration:none;font-weight:500;background:linear-gradient(135deg,#3a7d5c,#5ab584);padding:10px 24px;border-radius:9px;box-shadow:0 2px 10px rgba(58,125,92,0.25);">Logout</a></li>
+    {% else %}
+    <li><a href="{% url 'signup_page' %}" style="font-size:15px;color:#fff;text-decoration:none;font-weight:500;background:linear-gradient(135deg,#3a7d5c,#5ab584);padding:10px 24px;border-radius:9px;box-shadow:0 2px 10px rgba(58,125,92,0.25);">Sign up/Login</a></li>
+    {% endif %}
+  </ul>
+</nav>
 
-     {% if user.is_authenticated %}
-      {% comment %} <li><a href="#">Welcome, {{ user.username }}</a></li> {% endcomment %}
-      <li><a href="{% url 'logout_page' %}">Logout</a></li>
-      {% else %}
-      <li><a href="{% url 'signup_page' %}">Sign up/Login</a></li>
-      {% endif %}
-    </ul>
-  </nav>
-</header>
+<main style="position:relative;z-index:10;flex:1;">
 
-      <main>
-        <section class="hero">
-          <h1>About Us</h1>
-          <p>
-            Eunoia is a Ethereal word derived from the Greek language. It
-            denotes "beautiful thinking" or “a state of normal mental health”.
-            Eunoia is often used to describe a mind that is well-balanced and
-            exhibits positive, constructive thoughts. In rhetoric, eunoia refers
-            to the goodwill a speaker fosters between themselves and their
-            audience, an essential aspect of persuasive speaking.
-          </p>
-        </section>
-
-        <section class="features">
-          <div class="feature-card">
-            <h3>Innovation</h3>
-            <p>Pushing boundaries with creative solutions</p>
-          </div>
-          <div class="feature-card">
-            <h3>Quality</h3>
-            <p>Delivering excellence in every project</p>
-          </div>
-          <div class="feature-card">
-            <h3>Support</h3>
-            <p>24/7 dedicated customer service</p>
-          </div>
-        </section>
-      </main>
-
-      <footer>
-        <p>&copy; 2025 Eunoia. All rights reserved.</p>
-      </footer>
+  <!-- Carousel -->
+  <div class="carousel">
+    <div class="carousel-container">
+      <div class="carousel-slide slide-1">
+        <div class="carousel-content">
+          <h2>Beautiful Thinking</h2>
+          <p>Eunoia means a well-balanced mind — calm, clear, and full of positive, constructive thought.</p>
+        </div>
+      </div>
+      <div class="carousel-slide slide-2">
+        <div class="carousel-content">
+          <h2>Your Wellness Companion</h2>
+          <p>Track your mood, talk to Eviee AI, and build small habits that support your mental health.</p>
+        </div>
+      </div>
+      <div class="carousel-slide slide-3">
+        <div class="carousel-content">
+          <h2>Goodwill, By Design</h2>
+          <p>Every feature is built with empathy first — a space that listens before it speaks.</p>
+        </div>
+      </div>
     </div>
-     <script>
-  function toggleMenu() {
-    document.querySelector(".nav-links").classList.toggle("active");
+    <button class="carousel-btn prev" aria-label="Previous slide">‹</button>
+    <button class="carousel-btn next" aria-label="Next slide">›</button>
+    <div class="carousel-dots"></div>
+  </div>
+
+  <section style="text-align:center;padding:72px 24px 56px;max-width:760px;margin:0 auto;">
+    <div style="width:68px;height:68px;background:linear-gradient(135deg,#3a7d5c,#5ab584);border-radius:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 22px;box-shadow:0 8px 28px rgba(58,125,92,0.25);">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </div>
+    <h1 style="font-size:34px;font-weight:600;color:#1a4a2e;margin-bottom:18px;letter-spacing:-0.3px;">About Us</h1>
+    <p style="font-size:16px;color:#4a7c5f;line-height:1.7;">
+      Eunoia is an ethereal word derived from the Greek language. It denotes
+      "beautiful thinking" or "a state of normal mental health." Eunoia is
+      often used to describe a mind that is well-balanced and exhibits
+      positive, constructive thoughts. In rhetoric, eunoia refers to the
+      goodwill a speaker fosters between themselves and their audience, an
+      essential aspect of persuasive speaking.
+    </p>
+
+    <button id="cta-button" style="margin-top:28px;background:linear-gradient(135deg,#2d6b4a,#4a9e70);color:#fff;border:none;padding:14px 32px;border-radius:11px;font-size:15px;font-weight:600;cursor:pointer;box-shadow:0 4px 20px rgba(58,125,92,0.3);">
+      Start Your Journey
+    </button>
+  </section>
+
+  <section style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:24px;padding:0 24px 80px;max-width:1100px;margin:0 auto;">
+
+    <div class="feature-card" style="background:#fff;border-radius:18px;padding:32px 28px;box-shadow:0 4px 30px rgba(58,125,92,0.08);border:1px solid rgba(58,125,92,0.08);text-align:center;">
+      <div style="width:52px;height:52px;background:linear-gradient(135deg,#3a7d5c,#5ab584);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;box-shadow:0 6px 18px rgba(58,125,92,0.2);">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      </div>
+      <h3 style="font-size:17px;font-weight:600;color:#1a4a2e;margin-bottom:10px;">Innovation</h3>
+      <p style="font-size:14px;color:#6b9e82;line-height:1.5;">Pushing boundaries with creative solutions</p>
+    </div>
+
+    <div class="feature-card" style="background:#fff;border-radius:18px;padding:32px 28px;box-shadow:0 4px 30px rgba(58,125,92,0.08);border:1px solid rgba(58,125,92,0.08);text-align:center;">
+      <div style="width:52px;height:52px;background:linear-gradient(135deg,#3a7d5c,#5ab584);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;box-shadow:0 6px 18px rgba(58,125,92,0.2);">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
+      </div>
+      <h3 style="font-size:17px;font-weight:600;color:#1a4a2e;margin-bottom:10px;">Quality</h3>
+      <p style="font-size:14px;color:#6b9e82;line-height:1.5;">Delivering excellence in every project</p>
+    </div>
+
+    <div class="feature-card" style="background:#fff;border-radius:18px;padding:32px 28px;box-shadow:0 4px 30px rgba(58,125,92,0.08);border:1px solid rgba(58,125,92,0.08);text-align:center;">
+      <div style="width:52px;height:52px;background:linear-gradient(135deg,#3a7d5c,#5ab584);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;box-shadow:0 6px 18px rgba(58,125,92,0.2);">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      </div>
+      <h3 style="font-size:17px;font-weight:600;color:#1a4a2e;margin-bottom:10px;">Support</h3>
+      <p style="font-size:14px;color:#6b9e82;line-height:1.5;">24/7 dedicated customer service</p>
+    </div>
+
+  </section>
+</main>
+
+<footer style="position:relative;z-index:10;text-align:center;padding:28px 20px;background:rgba(255,255,255,0.7);backdrop-filter:blur(12px);border-top:1px solid rgba(58,125,92,0.1);">
+  <p style="font-size:13px;color:#6b9e82;">&copy; 2025 Eunoia. All rights reserved.</p>
+</footer>
+
+<script>
+function toggleMenu() {
+  document.querySelector(".nav-links").classList.toggle("active");
+}
+
+// Smooth scroll for navigation links
+document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+  anchor.addEventListener("click", function (e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute("href"));
+    if (target) {
+      target.scrollIntoView({
+        behavior: "smooth",
+      });
+    }
+  });
+});
+
+// Carousel functionality
+const carousel = {
+  container: document.querySelector(".carousel-container"),
+  slides: document.querySelectorAll(".carousel-slide"),
+  prevBtn: document.querySelector(".carousel-btn.prev"),
+  nextBtn: document.querySelector(".carousel-btn.next"),
+  dotsContainer: document.querySelector(".carousel-dots"),
+  currentSlide: 0,
+  slideCount: document.querySelectorAll(".carousel-slide").length,
+
+  init() {
+    // Create dots
+    for (let i = 0; i < this.slideCount; i++) {
+      const dot = document.createElement("div");
+      dot.classList.add("dot");
+      if (i === 0) dot.classList.add("active");
+      dot.addEventListener("click", () => this.goToSlide(i));
+      this.dotsContainer.appendChild(dot);
+    }
+
+    // Add button listeners
+    this.prevBtn.addEventListener("click", () => this.prevSlide());
+    this.nextBtn.addEventListener("click", () => this.nextSlide());
+
+    // Auto advance slides
+    setInterval(() => this.nextSlide(), 5000);
+  },
+
+  updateSlide() {
+    this.container.style.transform = `translateX(-${
+      this.currentSlide * 33.333
+    }%)`;
+
+    // Update dots
+    document.querySelectorAll(".dot").forEach((dot, index) => {
+      dot.classList.toggle("active", index === this.currentSlide);
+    });
+  },
+
+  nextSlide() {
+    this.currentSlide = (this.currentSlide + 1) % this.slideCount;
+    this.updateSlide();
+  },
+
+  prevSlide() {
+    this.currentSlide =
+      (this.currentSlide - 1 + this.slideCount) % this.slideCount;
+    this.updateSlide();
+  },
+
+  goToSlide(index) {
+    this.currentSlide = index;
+    this.updateSlide();
+  },
+};
+
+// Initialize carousel
+carousel.init();
+
+// Add animation to CTA button
+const ctaButton = document.getElementById("cta-button");
+if (ctaButton) {
+  ctaButton.addEventListener("click", () => {
+    ctaButton.style.transform = "scale(0.95)";
+    setTimeout(() => {
+      ctaButton.style.transform = "scale(1)";
+    }, 200);
+
+    alert(
+      "Thank you for your interest! This is where you would typically start your journey."
+    );
+  });
+}
+
+// Add intersection observer for fade-in animations
+const observer = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = "1";
+        entry.target.style.transform = "translateY(0)";
+      }
+    });
+  },
+  {
+    threshold: 0.1,
   }
+);
+
+// Apply fade-in animation to feature cards
+document.querySelectorAll(".feature-card").forEach((card) => {
+  card.style.opacity = "0";
+  card.style.transform = "translateY(20px)";
+  card.style.transition = "opacity 0.5s ease, transform 0.5s ease";
+  observer.observe(card);
+});
 </script>
-  </body>
+</body>
 </html>

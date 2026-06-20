@@ -1,97 +1,102 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mood Tracker & Daily Challenge</title>
-    <link rel="stylesheet" href="{% static 'css/mood.css' %}" />
-  </head>
-  <body>
-    {% comment %} <a href="{% url 'home' %}" class="back-symbol">< Back to home </a> {% endcomment %}
-    <header>
-  <nav>
-    <a href="{% url 'index' %}">
-      <img
-        src="{% static 'images/Eunoia_Logo (1).png' %}"
-        alt="Eunoia"
-        width="50"
-        height="50"
-      />
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Eunoia — Mood Tracker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+</head>
+<body style="margin:0;padding:0;font-family:'Inter',system-ui,sans-serif;min-height:100vh;display:flex;flex-direction:column;background:#f0f7f4;">
+
+<div style="position:fixed;inset:0;background:linear-gradient(145deg,#e8f5ee 0%,#f0f7f4 50%,#e0f0e8 100%);z-index:0;"></div>
+<div style="position:fixed;top:-120px;right:-80px;width:500px;height:500px;border-radius:50%;background:rgba(90,181,132,0.12);z-index:1;pointer-events:none;"></div>
+<div style="position:fixed;bottom:-150px;left:-100px;width:450px;height:450px;border-radius:50%;background:rgba(58,125,92,0.08);z-index:1;pointer-events:none;"></div>
+
+<nav style="position:relative;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:22px 48px;background:rgba(255,255,255,0.7);backdrop-filter:blur(12px);border-bottom:1px solid rgba(58,125,92,0.1);">
+  <div style="display:flex;align-items:center;gap:12px;">
+    <a href="{% url 'index' %}" style="text-decoration:none;display:flex;align-items:center;gap:12px;">
+      <img src="{% static 'images/Eunoia_Logo (1).png' %}" alt="Eunoia" width="48" height="48" style="border-radius:11px;box-shadow:0 4px 12px rgba(58,125,92,0.3);"/>
+      <span style="font-size:20px;font-weight:600;color:#1a4a2e;letter-spacing:0.2px;">Eunoia</span>
     </a>
-    <div class="logo">&nbsp;&nbsp;Eunoia</div>
+  </div>
 
-    <!-- Hamburger Menu Button (only visible on mobile) -->
-    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+  <button class="menu-toggle" onclick="toggleMenu()" style="display:none;background:none;border:none;font-size:26px;color:#1a4a2e;cursor:pointer;">☰</button>
 
-    <ul class="nav-links">
-      <li><a href="{% url 'home' %}">Home</a></li>
-      <li><a href="{% url 'about' %}">About Us</a></li>
-      {% comment %} <li><a href="{% url 'mood' %}">Mood Tracker</a></li> {% endcomment %}
-      <li><a href="{% url 'edoc' %}">EDoc</a></li>
-      <li><a href="{% url 'chatbot' %}">Eviee AI</a></li>
+  <ul class="nav-links" style="display:flex;align-items:center;gap:28px;list-style:none;margin:0;padding:0;">
+    <li><a href="{% url 'home' %}" style="font-size:15px;color:#4a7c5f;text-decoration:none;font-weight:500;">Home</a></li>
+    <li><a href="{% url 'about' %}" style="font-size:15px;color:#4a7c5f;text-decoration:none;font-weight:500;">About Us</a></li>
+    <li><a href="{% url 'edoc' %}" style="font-size:15px;color:#4a7c5f;text-decoration:none;font-weight:500;">EDoc</a></li>
+    <li><a href="{% url 'chatbot' %}" style="font-size:15px;color:#4a7c5f;text-decoration:none;font-weight:500;">Eviee AI</a></li>
+  </ul>
+</nav>
 
-      {% comment %} {% if user.is_authenticated %}
-      <li><a href="#">Welcome, {{ user.username }}</a></li>
-      <li><a href="{% url 'logout_page' %}">Logout</a></li>
-      {% else %}
-      <li><a href="{% url 'signup_page' %}">Sign up/Login</a></li>
-      {% endif %} {% endcomment %}
-    </ul>
-  </nav>
-</header>
+<main style="position:relative;z-index:10;flex:1;display:flex;justify-content:center;padding:48px 20px;">
+  <div style="width:100%;max-width:760px;">
 
-    <div class="container">
-      <h1>Mood Tracker & Daily Challenge</h1>
-      
-      <div class="mood-grid">
-        <button class="mood-btn" onclick="addMood('Happy')">
-          <span class="mood-icon">😊</span>
-          <span class="mood-label">Happy</span>
+    <div style="text-align:center;margin-bottom:36px;">
+      <div style="width:68px;height:68px;background:linear-gradient(135deg,#3a7d5c,#5ab584);border-radius:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;box-shadow:0 8px 28px rgba(58,125,92,0.25);">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+      </div>
+      <h1 style="font-size:30px;font-weight:600;color:#1a4a2e;margin-bottom:8px;letter-spacing:-0.3px;">Mood Tracker & Daily Challenge</h1>
+      <p style="font-size:16px;color:#6b9e82;line-height:1.5;">Check in with yourself — how are you feeling today?</p>
+    </div>
+
+    <div style="background:#fff;border-radius:20px;padding:44px 40px;box-shadow:0 4px 40px rgba(58,125,92,0.1);border:1px solid rgba(58,125,92,0.08);">
+
+      <div class="mood-grid" style="display:flex;justify-content:space-around;flex-wrap:wrap;gap:16px;margin-bottom:8px;">
+        <button class="mood-btn" onclick="addMood('Happy')" style="background:#f8fdf9;border:1.5px solid #d4ead9;border-radius:14px;cursor:pointer;text-align:center;padding:18px 12px;transition:all 0.2s;min-width:88px;flex:1 1 88px;max-width:130px;">
+          <span style="font-size:32px;display:block;">😊</span>
+          <span style="display:block;font-weight:600;font-size:14px;color:#1a4a2e;margin-top:8px;">Happy</span>
         </button>
-        <button class="mood-btn" onclick="addMood('Sad')">
-          <span class="mood-icon">😢</span>
-          <span class="mood-label">Sad</span>
+        <button class="mood-btn" onclick="addMood('Sad')" style="background:#f8fdf9;border:1.5px solid #d4ead9;border-radius:14px;cursor:pointer;text-align:center;padding:18px 12px;transition:all 0.2s;min-width:88px;flex:1 1 88px;max-width:130px;">
+          <span style="font-size:32px;display:block;">😢</span>
+          <span style="display:block;font-weight:600;font-size:14px;color:#1a4a2e;margin-top:8px;">Sad</span>
         </button>
-        <button class="mood-btn" onclick="addMood('Anxious')">
-          <span class="mood-icon">😰</span>
-          <span class="mood-label">Anxious</span>
+        <button class="mood-btn" onclick="addMood('Anxious')" style="background:#f8fdf9;border:1.5px solid #d4ead9;border-radius:14px;cursor:pointer;text-align:center;padding:18px 12px;transition:all 0.2s;min-width:88px;flex:1 1 88px;max-width:130px;">
+          <span style="font-size:32px;display:block;">😰</span>
+          <span style="display:block;font-weight:600;font-size:14px;color:#1a4a2e;margin-top:8px;">Anxious</span>
         </button>
-        <button class="mood-btn" onclick="addMood('Stressed')">
-          <span class="mood-icon">😫</span>
-          <span class="mood-label">Stressed</span>
+        <button class="mood-btn" onclick="addMood('Stressed')" style="background:#f8fdf9;border:1.5px solid #d4ead9;border-radius:14px;cursor:pointer;text-align:center;padding:18px 12px;transition:all 0.2s;min-width:88px;flex:1 1 88px;max-width:130px;">
+          <span style="font-size:32px;display:block;">😫</span>
+          <span style="display:block;font-weight:600;font-size:14px;color:#1a4a2e;margin-top:8px;">Stressed</span>
         </button>
-        <button class="mood-btn" onclick="addMood('Calm')">
-          <span class="mood-icon">😌</span>
-          <span class="mood-label">Calm</span>
+        <button class="mood-btn" onclick="addMood('Calm')" style="background:#f8fdf9;border:1.5px solid #d4ead9;border-radius:14px;cursor:pointer;text-align:center;padding:18px 12px;transition:all 0.2s;min-width:88px;flex:1 1 88px;max-width:130px;">
+          <span style="font-size:32px;display:block;">😌</span>
+          <span style="display:block;font-weight:600;font-size:14px;color:#1a4a2e;margin-top:8px;">Calm</span>
         </button>
       </div>
 
-      <div class="history-box">
-        <h2>Mood History</h2>
+      <div class="history-box" id="history-box" style="background:#f8fdf9;border:1px solid #e3f1e8;border-radius:14px;padding:24px;margin-top:32px;display:none;">
+        <h2 style="font-size:17px;font-weight:600;color:#1a4a2e;margin-bottom:14px;">Mood History</h2>
         <div id="history-list">
-          <div class="empty-state">
+          <div class="empty-state" style="font-size:14px;color:#8ab89a;text-align:center;padding:12px 0;">
             No moods recorded yet. Start by selecting your current mood above!
           </div>
         </div>
-        <button class="clear-btn" onclick="clearHistory()">Clear History</button>
+        <button class="clear-btn" onclick="clearHistory()" style="margin-top:16px;padding:10px 20px;background:#fdf0f0;color:#cc3333;border:1px solid #ffd6d6;border-radius:9px;cursor:pointer;font-weight:600;font-size:13px;transition:background 0.2s;">Clear History</button>
       </div>
     </div>
+  </div>
+</main>
 
-    <!-- Challenge Popup -->
-    <div class="overlay" id="overlay"></div>
-    <div class="popup" id="challenge-popup">
-      <h2>Your Daily Challenge</h2>
-      <p id="challenge-text">Your challenge will appear here.</p>
-      <button onclick="closePopup()">Got It!</button>
-    </div>
+<!-- Challenge Popup -->
+<div class="overlay" id="overlay" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(26,74,46,0.45);display:none;z-index:500;"></div>
+<div class="popup" id="challenge-popup" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:90%;max-width:420px;background:#fff;padding:36px 32px;border-radius:18px;box-shadow:0 20px 60px rgba(58,125,92,0.3);text-align:center;display:none;z-index:1000;">
+  <div style="width:56px;height:56px;background:linear-gradient(135deg,#3a7d5c,#5ab584);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 8px 24px rgba(58,125,92,0.25);">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+  </div>
+  <h2 style="font-size:20px;font-weight:600;color:#1a4a2e;margin-bottom:10px;">Your Daily Challenge</h2>
+  <p id="challenge-text" style="font-size:15px;color:#4a7c5f;line-height:1.5;margin-bottom:22px;">Your challenge will appear here.</p>
+  <button onclick="closePopup()" style="background:linear-gradient(135deg,#2d6b4a,#4a9e70);color:#fff;border:none;padding:12px 28px;border-radius:10px;cursor:pointer;font-weight:600;font-size:14px;box-shadow:0 4px 16px rgba(58,125,92,0.3);">Got It!</button>
+</div>
 
 <script>
   const historyList = document.getElementById("history-list");
   const overlay = document.getElementById("overlay");
   const popup = document.getElementById("challenge-popup");
   const challengeText = document.getElementById("challenge-text");
-  const historyBox = document.querySelector(".history-box");
+  const historyBox = document.getElementById("history-box");
 
   // Daily challenges
   const challenges = {
@@ -145,7 +150,7 @@
     return "";
   }
 
-  // --- Add mood ---x
+  // --- Add mood ---
   async function addMood(mood) {
     const response = await fetch("/mood/api/moods/add/", {
       method: "POST",
@@ -165,62 +170,55 @@
   }
 
   // --- Load moods from backend ---
-async function loadMoods() {
-  const historyList = document.getElementById("history-list");
-  const historyBox = document.querySelector(".history-box");
+  async function loadMoods() {
+    try {
+      const response = await fetch("/mood/api/moods/get/");
+      if (!response.ok) throw new Error("Failed to fetch moods");
 
-  try {
-    const response = await fetch("/mood/api/moods/get/");
-    if (!response.ok) throw new Error("Failed to fetch moods");
+      const moods = await response.json();
+      console.log("📌 Fetched moods:", moods);
 
-    const moods = await response.json();
-    console.log("📌 Fetched moods:", moods);
-
-    if (!Array.isArray(moods) || moods.length === 0) {
-      historyBox.classList.remove("show"); // hide if no moods
-      historyList.innerHTML = `
-        <div class="empty-state">
-          No moods recorded yet. Start by selecting your current mood above!
-        </div>`;
-    } else {
-      historyBox.classList.add("show"); // show if moods exist
-      historyList.innerHTML = moods
-        .map((entry) => {
-          // If backend sends ISO date → format nicely
-          let formatted = entry.timestamp;
-          try {
-            const date = new Date(entry.timestamp);
-            if (!isNaN(date)) {
-              formatted = date.toLocaleString("en-IN", {
-                weekday: "short",
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-              });
+      if (!Array.isArray(moods) || moods.length === 0) {
+        historyBox.style.display = "none";
+        historyList.innerHTML = `
+          <div class="empty-state" style="font-size:14px;color:#8ab89a;text-align:center;padding:12px 0;">
+            No moods recorded yet. Start by selecting your current mood above!
+          </div>`;
+      } else {
+        historyBox.style.display = "block";
+        historyList.innerHTML = moods
+          .map((entry) => {
+            let formatted = entry.timestamp;
+            try {
+              const date = new Date(entry.timestamp);
+              if (!isNaN(date)) {
+                formatted = date.toLocaleString("en-IN", {
+                  weekday: "short",
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                });
+              }
+            } catch (e) {
+              formatted = entry.timestamp;
             }
-          } catch (e) {
-            // fallback → just show raw string
-            formatted = entry.timestamp;
-          }
 
-          return `
-            <div class="history-entry">
-              <span>${entry.mood}</span>
-              <span class="timestamp">${formatted}</span>
-            </div>`;
-        })
-        .join("");
+            return `
+              <div class="history-entry" style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:linear-gradient(135deg,#2d6b4a,#4a9e70);border-radius:10px;margin-top:8px;color:#fff;font-weight:600;font-size:14px;flex-wrap:wrap;gap:6px;">
+                <span>${entry.mood}</span>
+                <span style="font-size:12px;font-weight:500;opacity:0.9;">${formatted}</span>
+              </div>`;
+          })
+          .join("");
+      }
+    } catch (error) {
+      console.error("Error loading moods:", error);
+      historyList.innerHTML = `<div style="font-size:14px;color:#cc3333;text-align:center;padding:12px 0;">⚠️ Could not load mood history.</div>`;
+      historyBox.style.display = "none";
     }
-  } catch (error) {
-    console.error("Error loading moods:", error);
-    historyList.innerHTML = `<div class="error-state">⚠️ Could not load mood history.</div>`;
-    historyBox.classList.remove("show"); // hide on error
   }
-}
-
-
 
   // --- Clear moods from backend ---
   async function clearHistory() {
@@ -244,13 +242,13 @@ async function loadMoods() {
     const randomChallenge =
       challengeList[Math.floor(Math.random() * challengeList.length)];
     challengeText.innerText = randomChallenge;
-    overlay.classList.add("show");
-    popup.classList.add("show");
+    overlay.style.display = "block";
+    popup.style.display = "block";
   }
 
   function closePopup() {
-    overlay.classList.remove("show");
-    popup.classList.remove("show");
+    overlay.style.display = "none";
+    popup.style.display = "none";
   }
 
   // --- Toggle menu (mobile) ---
@@ -261,11 +259,46 @@ async function loadMoods() {
     }
   }
 
-  // --- Run on page load ---
-document.addEventListener("DOMContentLoaded", () => {
-  loadMoods();
-});
+  // --- Mood button hover effect ---
+  document.querySelectorAll(".mood-btn").forEach((btn) => {
+    btn.addEventListener("mouseenter", () => {
+      btn.style.borderColor = "#5ab584";
+      btn.style.background = "#fff";
+      btn.style.transform = "translateY(-3px)";
+      btn.style.boxShadow = "0 8px 20px rgba(58,125,92,0.15)";
+    });
+    btn.addEventListener("mouseleave", () => {
+      btn.style.borderColor = "#d4ead9";
+      btn.style.background = "#f8fdf9";
+      btn.style.transform = "translateY(0)";
+      btn.style.boxShadow = "none";
+    });
+  });
 
+  // --- Run on page load ---
+  document.addEventListener("DOMContentLoaded", () => {
+    loadMoods();
+  });
 </script>
- </body>
+
+<style>
+  @media (max-width: 760px) {
+    .menu-toggle { display: block !important; }
+    .nav-links {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: #fff;
+      flex-direction: column;
+      gap: 18px !important;
+      padding: 20px 0;
+      box-shadow: 0 6px 20px rgba(58,125,92,0.12);
+      z-index: 1100;
+    }
+    .nav-links.active { display: flex; }
+  }
+</style>
+</body>
 </html>

@@ -2,69 +2,76 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Activate Your Account</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        background-color: #f4f4f4;
-        padding: 40px;
-      }
-      .container {
-        max-width: 600px;
-        background: #fff;
-        margin: auto;
-        padding: 30px;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      }
-      h2 {
-        color: #2c3e50;
-      }
-      p {
-        font-size: 16px;
-        color: #555;
-      }
-      .btn {
-        display: inline-block;
-        margin-top: 20px;
-        padding: 12px 25px;
-        background-color: #007bff;
-        color: #fff;
-        text-decoration: none;
-        border-radius: 5px;
-        font-weight: bold;
-      }
-      .btn:hover {
-        background-color: #0056b3;
-      }
-      .footer {
-        margin-top: 40px;
-        font-size: 12px;
-        color: #999;
-        text-align: center;
-      }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Activate Your Account — Eunoia</title>
   </head>
-  <body>
-    <div class="container">
-      <h2>Welcome to Eunoia!</h2>
-      <p>Hi {{ user.username }},</p>
-      <p>
-        Thanks for signing up. Please click the button below to activate your
-        account:
-      </p>
+  <body style="margin:0;padding:0;font-family:'Inter',Arial,sans-serif;background:#f0f7f4;min-height:100vh;">
 
-      <a href="{{ activation_link }}" class="btn">Activate Account</a>
+    <!-- Wrapper -->
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#f0f7f4;padding:40px 20px;">
+      <tr>
+        <td align="center">
 
-      <p>
-        If the button doesn’t work, you can also copy and paste the link below
-        into your browser:
-      </p>
-      <p style="word-break: break-all">
-        <a href="{{ activation_link }}">{{ activation_link }}</a>
-      </p>
+          <!-- Card -->
+          <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#fff;border-radius:20px;box-shadow:0 4px 40px rgba(58,125,92,0.1);border:1px solid rgba(58,125,92,0.08);overflow:hidden;">
 
-      <div class="footer">&copy; 2025 Eunoia. All rights reserved.</div>
-    </div>
+            <!-- Header -->
+            <tr>
+              <td style="background:linear-gradient(135deg,#2d6b4a,#4a9e70);padding:36px 40px;text-align:center;">
+                <div style="width:64px;height:64px;background:rgba(255,255,255,0.2);border-radius:16px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px;">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </div>
+                <div style="font-size:26px;font-weight:600;color:#fff;letter-spacing:-0.3px;">Welcome to Eunoia</div>
+                <div style="font-size:15px;color:rgba(255,255,255,0.8);margin-top:6px;">Your wellness journey starts here</div>
+              </td>
+            </tr>
+
+            <!-- Body -->
+            <tr>
+              <td style="padding:40px;">
+
+                <p style="font-size:16px;color:#1a4a2e;font-weight:600;margin:0 0 8px;">Hi {{ user.username }},</p>
+                <p style="font-size:15px;color:#6b9e82;line-height:1.6;margin:0 0 28px;">
+                  Thanks for signing up! Please activate your account by clicking the button below to begin your journey with Eunoia.
+                </p>
+
+                <!-- Button -->
+                <table width="100%" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td align="center" style="padding-bottom:28px;">
+                      <a href="{{ activation_link }}"
+                        style="display:inline-block;padding:15px 36px;background:linear-gradient(135deg,#2d6b4a,#4a9e70);color:#fff;text-decoration:none;font-size:16px;font-weight:600;border-radius:11px;box-shadow:0 4px 20px rgba(58,125,92,0.3);letter-spacing:0.2px;">
+                        Activate Account →
+                      </a>
+                    </td>
+                  </tr>
+                </table>
+
+                <!-- Divider -->
+                <div style="height:1px;background:#e8f5ee;margin-bottom:24px;"></div>
+
+                <p style="font-size:13px;color:#a8c9b8;line-height:1.6;margin:0 0 8px;">
+                  If the button doesn't work, copy and paste this link into your browser:
+                </p>
+                <p style="font-size:13px;word-break:break-all;margin:0;">
+                  <a href="{{ activation_link }}" style="color:#3a7d5c;text-decoration:none;">{{ activation_link }}</a>
+                </p>
+
+              </td>
+            </tr>
+
+            <!-- Footer -->
+            <tr>
+              <td style="background:#f8fdf9;padding:20px 40px;border-top:1px solid #e8f5ee;text-align:center;">
+                <p style="font-size:12px;color:#a8c9b8;margin:0;">&copy; 2025 Eunoia. All rights reserved.</p>
+              </td>
+            </tr>
+
+          </table>
+
+        </td>
+      </tr>
+    </table>
+
   </body>
 </html>

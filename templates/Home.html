@@ -1,101 +1,309 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Eunoia</title>
-    <link rel="stylesheet" href="{% static 'css/home.css' %}" />
-    <script src="{% static 'js/home.js' %}" defer></script>
-  </head>
-  <body>
-    <div id="app">
+<head>
+  <meta charset="UTF-8"/>
+  <link rel="icon" type="image/svg+xml" href="/vite.svg"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Eunoia</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    .carousel {
+      position: relative;
+      width: 100%;
+      height: 560px;
+      overflow: hidden;
+      max-width: 100vw;
+    }
+    .carousel-container {
+      display: flex;
+      width: 300%;
+      height: 100%;
+      transition: transform 0.6s ease-in-out;
+    }
+    .carousel-slide {
+      position: relative;
+      width: 33.333%;
+      height: 100%;
+    }
+    .carousel-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.72);
+    }
+    .carousel-content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: #fff;
+      width: 90vw;
+      max-width: 600px;
+    }
+
+    .carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(6px);
+      color: #fff;
+      width: 46px;
+      height: 46px;
+      border: 1px solid rgba(255,255,255,0.3);
+      cursor: pointer;
+      font-size: 1.3rem;
+      transition: background-color 0.3s ease;
+      z-index: 2;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .carousel-btn:hover { background: rgba(255,255,255,0.35); }
+    .carousel-btn.prev { left: 1.5rem; }
+    .carousel-btn.next { right: 1.5rem; }
+
+    .carousel-dots {
+      position: absolute;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 0.5rem;
+      z-index: 2;
+    }
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.45);
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      border: none;
+    }
+    .dot.active { background: #fff; transform: scale(1.2); }
+
+    .feature-card { transition: opacity 0.5s ease, transform 0.5s ease; }
+    #cta-button { transition: transform 0.15s ease; }
+    #cta-button a { text-decoration: none; color: #fff; }
+
+    @media (max-width: 900px) {
+      .carousel { height: 420px; }
+      .menu-toggle { display: block !important; }
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: #fff;
+        flex-direction: column;
+        gap: 18px !important;
+        padding: 20px 0;
+        box-shadow: 0 6px 20px rgba(58,125,92,0.12);
+        z-index: 1100;
+      }
+      .nav-links.active { display: flex; }
+    }
+    @media (max-width: 600px) {
+      .carousel { height: 280px; }
+    }
+  </style>
+</head>
+<body style="margin:0;padding:0;font-family:'Inter',system-ui,sans-serif;min-height:100vh;display:flex;flex-direction:column;background:#f0f7f4;">
+
+<div id="app" style="display:flex;flex-direction:column;min-height:100vh;">
+
+<div style="position:fixed;inset:0;background:linear-gradient(145deg,#e8f5ee 0%,#f0f7f4 50%,#e0f0e8 100%);z-index:-1;"></div>
+
 <header>
-  <nav>
-    <a href="{% url 'index' %}">
-      <img
-        src="{% static 'images/Eunoia_Logo (1).png' %}"
-        alt="Eunoia"
-        width="50"
-        height="50"
-      />
-    </a>
-    <div class="logo">&nbsp;&nbsp;Eunoia</div>
+  <nav style="position:relative;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:22px 48px;background:rgba(255,255,255,0.7);backdrop-filter:blur(12px);border-bottom:1px solid rgba(58,125,92,0.1);">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <a href="{% url 'index' %}" style="text-decoration:none;display:flex;align-items:center;gap:12px;">
+        <img src="{% static 'images/Eunoia_Logo (1).png' %}" alt="Eunoia" width="48" height="48" style="border-radius:11px;box-shadow:0 4px 12px rgba(58,125,92,0.3);"/>
+        <span style="font-size:20px;font-weight:600;color:#1a4a2e;letter-spacing:0.2px;">Eunoia</span>
+      </a>
+    </div>
 
-    <!-- Hamburger Menu Button (only visible on mobile) -->
-    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+    <button class="menu-toggle" onclick="toggleMenu()" style="display:none;background:none;border:none;font-size:26px;color:#1a4a2e;cursor:pointer;">☰</button>
 
-    <ul class="nav-links">
-      <li><a href="{% url 'home' %}">Home</a></li>
-      <li><a href="{% url 'about' %}">About Us</a></li>
-      <li><a href="{% url 'mood' %}">Mood Tracker</a></li>
-      <li><a href="{% url 'edoc' %}">EDoc</a></li>
-      <li><a href="{% url 'chatbot' %}">Eviee AI</a></li>
+    <ul class="nav-links" style="display:flex;align-items:center;gap:28px;list-style:none;margin:0;padding:0;">
+      <li><a href="{% url 'home' %}" style="font-size:15px;color:#4a7c5f;text-decoration:none;font-weight:500;">Home</a></li>
+      <li><a href="{% url 'about' %}" style="font-size:15px;color:#4a7c5f;text-decoration:none;font-weight:500;">About Us</a></li>
+      <li><a href="{% url 'mood' %}" style="font-size:15px;color:#4a7c5f;text-decoration:none;font-weight:500;">Mood Tracker</a></li>
+      <li><a href="{% url 'edoc' %}" style="font-size:15px;color:#4a7c5f;text-decoration:none;font-weight:500;">EDoc</a></li>
+      <li><a href="{% url 'chatbot' %}" style="font-size:15px;color:#4a7c5f;text-decoration:none;font-weight:500;">Eviee AI</a></li>
 
       {% if user.is_authenticated %}
-      <li><a href="#">Welcome, {{ user.username }}</a></li>
-      <li><a href="{% url 'logout_page' %}">Logout</a></li>
+      <li><a href="#" style="font-size:15px;color:#4a7c5f;text-decoration:none;font-weight:500;">Welcome, {{ user.username }}</a></li>
+      <li><a href="{% url 'logout_page' %}" style="font-size:15px;color:#fff;text-decoration:none;font-weight:500;background:linear-gradient(135deg,#3a7d5c,#5ab584);padding:10px 24px;border-radius:9px;box-shadow:0 2px 10px rgba(58,125,92,0.25);">Logout</a></li>
       {% else %}
-      <li><a href="{% url 'signup_page' %}">Sign up/Login</a></li>
+      <li><a href="{% url 'signup_page' %}" style="font-size:15px;color:#fff;text-decoration:none;font-weight:500;background:linear-gradient(135deg,#3a7d5c,#5ab584);padding:10px 24px;border-radius:9px;box-shadow:0 2px 10px rgba(58,125,92,0.25);">Sign up/Login</a></li>
       {% endif %}
     </ul>
   </nav>
 </header>
 
-
-      <div class="carousel">
-        <div class="carousel-container">
-          <div class="carousel-slide">
-            <img src="{% static 'images/inspo4.jpg' %}" alt="Nature" />
-            <div class="carousel-content"></div>
-          </div>
-          <div class="carousel-slide">
-            <img src="{% static 'images/inspo5.jpg' %}" alt="Technology" />
-            <div class="carousel-content"></div>
-          </div>
-          <div class="carousel-slide">
-            <img src="{% static 'images/inspo3.jpg' %}" alt="Business" />
-            <div class="carousel-content"></div>
-          </div>
-        </div>
-        <button class="carousel-btn prev">&lt;</button>
-        <button class="carousel-btn next">&gt;</button>
-        <div class="carousel-dots"></div>
-      </div>
-
-      <main>
-        <section class="hero">
-          <h1>Welcome to Our Website</h1>
-          <p>Creating amazing digital experiences</p>
-          <button id="cta-button"><a href="{% url 'about' %}">About Us</a></button>
-        </section>
-
-        <section class="features">
-          <div class="feature-card">
-            <h3>Innovation</h3>
-            <p>Pushing boundaries with creative solutions</p>
-          </div>
-          <div class="feature-card">
-            <h3>Quality</h3>
-            <p>Delivering excellence in every project</p>
-          </div>
-          <div class="feature-card">
-            <h3>Support</h3>
-            <p>24/7 dedicated customer service</p>
-          </div>
-        </section>
-      </main>
-
-      <footer>
-        <p>&copy; 2025 Eunoia. All rights reserved.</p>
-      </footer>
+<div class="carousel">
+  <div class="carousel-container">
+    <div class="carousel-slide">
+      <img src="{% static 'images/inspo4.jpg' %}" alt="Nature"/>
+      <div class="carousel-content"></div>
     </div>
-    <script>
-  function toggleMenu() {
-    document.querySelector(".nav-links").classList.toggle("active");
-  }
-</script>
+    <div class="carousel-slide">
+      <img src="{% static 'images/inspo5.jpg' %}" alt="Technology"/>
+      <div class="carousel-content"></div>
+    </div>
+    <div class="carousel-slide">
+      <img src="{% static 'images/inspo3.jpg' %}" alt="Business"/>
+      <div class="carousel-content"></div>
+    </div>
+  </div>
+  <button class="carousel-btn prev" aria-label="Previous slide">‹</button>
+  <button class="carousel-btn next" aria-label="Next slide">›</button>
+  <div class="carousel-dots"></div>
+</div>
 
-  </body>
+<main style="flex:1;">
+  <section style="text-align:center;padding:80px 24px 64px;max-width:760px;margin:0 auto;">
+    <div style="width:68px;height:68px;background:linear-gradient(135deg,#3a7d5c,#5ab584);border-radius:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 22px;box-shadow:0 8px 28px rgba(58,125,92,0.25);">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </div>
+    <h1 style="font-size:38px;font-weight:600;color:#1a4a2e;margin-bottom:16px;letter-spacing:-0.3px;">Welcome to Eunoia</h1>
+    <p style="font-size:17px;color:#4a7c5f;line-height:1.6;margin-bottom:30px;">Creating amazing digital experiences for your wellbeing</p>
+    <button id="cta-button" style="background:linear-gradient(135deg,#2d6b4a,#4a9e70);border:none;padding:14px 32px;border-radius:11px;font-size:15px;font-weight:600;cursor:pointer;box-shadow:0 4px 20px rgba(58,125,92,0.3);">
+      <a href="{% url 'about' %}">About Us</a>
+    </button>
+  </section>
+
+  <section style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:24px;padding:0 24px 80px;max-width:1100px;margin:0 auto;">
+
+    <div class="feature-card" style="background:#fff;border-radius:18px;padding:32px 28px;box-shadow:0 4px 30px rgba(58,125,92,0.08);border:1px solid rgba(58,125,92,0.08);text-align:center;">
+      <div style="width:52px;height:52px;background:linear-gradient(135deg,#3a7d5c,#5ab584);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;box-shadow:0 6px 18px rgba(58,125,92,0.2);">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      </div>
+      <h3 style="font-size:17px;font-weight:600;color:#1a4a2e;margin-bottom:10px;">Innovation</h3>
+      <p style="font-size:14px;color:#6b9e82;line-height:1.5;">Pushing boundaries with creative solutions</p>
+    </div>
+
+    <div class="feature-card" style="background:#fff;border-radius:18px;padding:32px 28px;box-shadow:0 4px 30px rgba(58,125,92,0.08);border:1px solid rgba(58,125,92,0.08);text-align:center;">
+      <div style="width:52px;height:52px;background:linear-gradient(135deg,#3a7d5c,#5ab584);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;box-shadow:0 6px 18px rgba(58,125,92,0.2);">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
+      </div>
+      <h3 style="font-size:17px;font-weight:600;color:#1a4a2e;margin-bottom:10px;">Quality</h3>
+      <p style="font-size:14px;color:#6b9e82;line-height:1.5;">Delivering excellence in every project</p>
+    </div>
+
+    <div class="feature-card" style="background:#fff;border-radius:18px;padding:32px 28px;box-shadow:0 4px 30px rgba(58,125,92,0.08);border:1px solid rgba(58,125,92,0.08);text-align:center;">
+      <div style="width:52px;height:52px;background:linear-gradient(135deg,#3a7d5c,#5ab584);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;box-shadow:0 6px 18px rgba(58,125,92,0.2);">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      </div>
+      <h3 style="font-size:17px;font-weight:600;color:#1a4a2e;margin-bottom:10px;">Support</h3>
+      <p style="font-size:14px;color:#6b9e82;line-height:1.5;">24/7 dedicated customer service</p>
+    </div>
+
+  </section>
+</main>
+
+<footer style="position:relative;z-index:10;text-align:center;padding:28px 20px;background:rgba(255,255,255,0.7);backdrop-filter:blur(12px);border-top:1px solid rgba(58,125,92,0.1);">
+  <p style="font-size:13px;color:#6b9e82;">&copy; 2025 Eunoia. All rights reserved.</p>
+</footer>
+
+</div>
+
+<script>
+function toggleMenu() {
+  document.querySelector(".nav-links").classList.toggle("active");
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  // Smooth scroll
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener("click", function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute("href"));
+      if (target) {
+        target.scrollIntoView({ behavior: "smooth" });
+      }
+    });
+  });
+
+  // Carousel
+  const carousel = {
+    container: document.querySelector(".carousel-container"),
+    slides: document.querySelectorAll(".carousel-slide"),
+    prevBtn: document.querySelector(".carousel-btn.prev"),
+    nextBtn: document.querySelector(".carousel-btn.next"),
+    dotsContainer: document.querySelector(".carousel-dots"),
+    currentSlide: 0,
+    slideCount: document.querySelectorAll(".carousel-slide").length,
+    init() {
+      // Create dots
+      for (let i = 0; i < this.slideCount; i++) {
+        const dot = document.createElement("div");
+        dot.classList.add("dot");
+        if (i === 0) dot.classList.add("active");
+        dot.addEventListener("click", () => this.goToSlide(i));
+        this.dotsContainer.appendChild(dot);
+      }
+      // Add button listeners
+      this.prevBtn.addEventListener("click", () => this.prevSlide());
+      this.nextBtn.addEventListener("click", () => this.nextSlide());
+      // Auto advance
+      setInterval(() => this.nextSlide(), 5000);
+      this.updateSlide();
+    },
+    updateSlide() {
+      const percentage = 100 / this.slideCount;
+      this.container.style.transform = `translateX(-${
+        this.currentSlide * percentage
+      }%)`;
+
+      document.querySelectorAll(".dot").forEach((dot, index) => {
+        dot.classList.toggle("active", index === this.currentSlide);
+      });
+    },
+    nextSlide() {
+      this.currentSlide = (this.currentSlide + 1) % this.slideCount;
+      this.updateSlide();
+    },
+    prevSlide() {
+      this.currentSlide =
+        (this.currentSlide - 1 + this.slideCount) % this.slideCount;
+      this.updateSlide();
+    },
+    goToSlide(index) {
+      this.currentSlide = index;
+      this.updateSlide();
+    },
+  };
+
+  carousel.init();
+
+
+  // Fade-in animations
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = "1";
+          entry.target.style.transform = "translateY(0)";
+        }
+      });
+    },
+    { threshold: 0.1 }
+  );
+
+  document.querySelectorAll(".feature-card").forEach((card) => {
+    card.style.opacity = "0";
+    card.style.transform = "translateY(20px)";
+    card.style.transition = "opacity 0.5s ease, transform 0.5s ease";
+    observer.observe(card);
+  });
+});
+</script>
+</body>
 </html>

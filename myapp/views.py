@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseBadRequest
 from .models import Mood
+
 
 @login_required
 def mood(request):
@@ -9,9 +10,8 @@ def mood(request):
         mood_value = request.POST.get("mood")
         if mood_value:
             Mood.objects.create(user=request.user, mood=mood_value)
-        return redirect("mood")  # reload page after saving
+        return redirect("mood")
 
-    # Fetch mood history for logged-in user
     moods = Mood.objects.filter(user=request.user).order_by("-timestamp")
     return render(request, "mood.html", {"moods": moods})
 
@@ -21,6 +21,7 @@ def clear_mood_history(request):
     if request.method == "POST":
         Mood.objects.filter(user=request.user).delete()
         return JsonResponse({"status": "success"})
+    return HttpResponseBadRequest("POST required")
 
 
 def index(request):
@@ -49,7 +50,6 @@ def edoc(request):
 
 def self_assessment(request):
     return render(request, 'selfassesment.html')
-
 
 def qu(request):
     return render(request, 'qu.html')
